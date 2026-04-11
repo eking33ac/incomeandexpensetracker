@@ -1,0 +1,28 @@
+<!-- TODO: 
+    Does the tiny script here need to be a different file per the assignment instructions? 
+    
+    Redirect is broken anyway. VSCode says Live server needs head and body tags, but it has those and script runs after DOM is loaded and delay is 2 seconds. It doesn't work with or without dot/ in the path.
+    -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Page</title>
+</head>
+<body>
+    <main>
+        <p>Redirecting... If you are not automatically redirected, <a href="./pages/dashboard.html">click here</a>.</p>
+    </main>
+    <script defer>
+        // Immediately redirect to the dashboard in the pages folder
+        window.addEventListener('DOMContentLoaded', () => {
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.replace("./pages/dashboard.html");
+            }, 2000); 
+        });
+    </script>
+</body>
+</html>

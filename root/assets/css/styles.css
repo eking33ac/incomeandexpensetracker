@@ -1,0 +1,22 @@
+/* Instruction: Responsive Layout
+Your application must be usable on both desktop screens (1024px and wider) and mobile screens
+(375px to 767px). You do not need to support every possible viewport, but the following should hold
+true at both breakpoints:
+• No horizontal scrollbar on the page body
+• All text is legible without zooming
+• Navigation is accessible - If your desktop nav is a horizontal bar, your mobile view must
+provide an equivalent (collapsed menu, hamburger, or stacked links)
+*/
+
+/* set colors */
+/* look up how to do this to industry standard */
+
+/* Blocking the Webpage */
+header, nav, main, footer {
+   display: block;
+}
+
+/* Media Query for Mobile (Phone and Tablet) */
+@media (min-width: 375px) and (max-width: 767px) {
+    
+}

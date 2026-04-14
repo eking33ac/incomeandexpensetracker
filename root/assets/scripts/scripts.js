@@ -11,7 +11,9 @@ let footer = document.getElementsByTagName('footer')[0];
 let nav = document.getElementsByTagName('nav')[0];
 let pageTitle = document.getElementsByTagName('title')[0].textContent;
 
-let dashboardLink = 
+
+
+// let dashboardLink = // this is in case I learn to add links with js to centeralize them that way, but for now I can just add them in the nav innerHTML (since all pages are in same directory)
 
 // const title = "Hello World! This is a Slug";
 // const slug = title
@@ -23,12 +25,15 @@ let dashboardLink =
     
 
 window.addEventListener('load', function() {
+    /* check */
+    // alert('window loaded');
+    
     /* add head to document 
         link stylesheet(s)
-        link script(s)
+        link script(s) // If needed, currently not
     */
     this.document.head.innerHTML += `
-        <link rel="stylesheet" href="../assets/css/styles.css">
+        <link rel="stylesheet" href="../assets/css/main.css">
     `;
 
     /* add header to document */
@@ -38,19 +43,44 @@ window.addEventListener('load', function() {
 
     /* add navigation to document */
     nav.innerHTML = `
-        <!-- Figure out how to do that three-lines-stacked toggle -->
         <!-- Nav links are currently relative to any file inside the pages directory -->
-        <!-- If I decide to make navigation at the top of the page, I can re-add <span class="desktop">&nbsp;</span> after each link -->
-        <!-- Nav should be in a vertical column on the left side of the page -->
-        <nav class="nav-toggle">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="transactions.html">Transactions</a>
-			<a href="accounts.html">Accounts</a>
-		</nav>
+        <!-- If I decide to make navigation at the top of the page, re-add <span class="desktop">&nbsp;</span> after each link -->
+        
+        <btn id="hamburger-btn">&#9776</btn>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="transactions.html">Transactions</a>
+	    <a href="accounts.html">Accounts</a>
+
     `;
 
     /* add footer to document */
     footer.innerHTML = `
         <p>&copy; 2026 Income and Expense Tracker by Ezri King</p>
     `;
+
+    /* Run anything using the elements added above AFTER they have been added */
+    this.document.addEventListener('DOMContentLoaded', DOMLoaded());
 });
+
+function DOMLoaded() {
+    /* check */
+    // alert('DOM content loaded');
+
+    /* Add event listers to hamburger button to toggle nav links on desktop */
+    let hamburgerBtn = document.getElementById('hamburger-btn');
+
+    /* add event listener to hamburger button to toggle nav links on desktop */
+    hamburgerBtn.addEventListener('click', function() {
+        /* test */
+        console.log('hamburger button clicked');
+
+        /* toggle nav links desktop */
+        nav.classList.toggle('inactive');
+
+        console.log('nav class list after toggle:', nav.classList);
+    });
+
+};
+
+
+

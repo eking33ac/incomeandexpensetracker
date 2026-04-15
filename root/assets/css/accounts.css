@@ -1,0 +1,66 @@
+.accounts-flexbox {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 4% 0;
+}
+
+.account-name {
+    grid-area: account-name;
+    font-size: 1.5rem;
+    text-align: left;
+    justify-self: start;
+}
+
+.account-balance {
+    grid-area: account-balance;
+    font-size: 1.2rem;
+    justify-self: end;
+}
+
+.delete-btn {
+    grid-area: delete-btn;
+    background-color: #ff4d4d;
+}
+
+.view-details-btn {
+    grid-area: view-details-btn;
+    background-color: #4CAF50;
+}
+.account-panel button {
+    color: white;
+    font-weight: bold;
+    height: 40px;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.account-panel {
+    display: grid;
+    grid-template-areas:
+        "account-name account-balance"
+        "delete-btn view-details-btn"; 
+    gap: 50px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    color: white;
+    /* Fixed size for a square grid appearance */
+    width: 45%;
+    height: 200px;
+}
+
+
+
+
+@media (min-width: 375px) and (max-width: 767px) {
+    .account-panel {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

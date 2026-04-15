@@ -15,6 +15,7 @@ home screen.
 
 Known issues or limitations:
 - Be honest about what is incomplete or broken. 
+-- In mobile view, the navigation is visible when you first load in or switch pages, and the hamburger button needs to be pressed to actually view the page you navigated to.
 
 Changes from Phase 1 wireframes:
 - If any view differs significantly from your original wireframe, describe the change and

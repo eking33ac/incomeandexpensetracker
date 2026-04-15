@@ -41,6 +41,7 @@ provide an equivalent (collapsed menu, hamburger, or stacked links)
 /* Blocking the Webpage */
 header, nav, main, footer {
    display: block;
+   box-sizing: border-box;
 }
 
 /* root container */

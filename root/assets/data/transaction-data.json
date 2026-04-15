@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "accountId": 2,
+        "amount": 500.00,
+        "date": "2026-05-15",
+        "type": "Income",
+        "category": "Salary",
+        "account": "Checking"
+    },
+    {
+        "id": 2,
+        "accountId": 3,
+        "amount": 50.00,
+        "date": "2026-05-16",
+        "type": "Expense",
+        "category": ["Food", "Groceries"],
+        "account": "Checking"
+    },
+    {
+        "id": 3,
+        "accountId": 1,
+        "amount": 100.00,
+        "date": "2026-05-16",
+        "type": "Expense",
+        "category": "Utilities",
+        "account": "Checking"
+    }
+]

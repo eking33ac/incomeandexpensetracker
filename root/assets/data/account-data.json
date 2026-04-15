@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Checking",
+        "balance": 1500.45,
+        "color": "#3A8355"
+    },
+    {
+        "id": 2,
+        "name": "Saving",
+        "balance": 2500.00,
+        "color": "#3A79B5"
+    },
+    {
+        "id": 3,
+        "name": "Wallet",
+        "balance": 2500.00,
+        "color": "#EEB564"
+    }
+]

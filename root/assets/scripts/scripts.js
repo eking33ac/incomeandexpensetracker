@@ -9,6 +9,7 @@
 let header = document.getElementsByTagName('header')[0];
 let footer = document.getElementsByTagName('footer')[0];
 let nav = document.getElementsByTagName('nav')[0];
+let main = document.getElementsByTagName('main')[0];
 let pageTitle = document.getElementsByTagName('title')[0].textContent;
 
 
@@ -34,6 +35,8 @@ window.addEventListener('load', function() {
     */
     this.document.head.innerHTML += `
         <link rel="stylesheet" href="../assets/css/main.css">
+        <link rel="stylesheet" href="../assets/css/accounts.css">
+        <link rel="stylesheet" href="../assets/css/transactions.css">
     `;
 
     /* add header to document */
@@ -50,7 +53,6 @@ window.addEventListener('load', function() {
         <a href="dashboard.html">Dashboard</a>
         <a href="transactions.html">Transactions</a>
 	    <a href="accounts.html">Accounts</a>
-
     `;
 
     /* add footer to document */
@@ -80,7 +82,241 @@ function DOMLoaded() {
         console.log('nav class list after toggle:', nav.classList);
     });
 
+
+
+    /* Code for specific pages */    
+    if (pageTitle === 'Dashboard') {
+        /* code for dashboard page */
+    } else if (pageTitle === 'Accounts') {
+        /* code for accounts page */
+        // fetch account data 
+        fetch('../assets/data/account-data.json')
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                renderAccountData(data);
+            })
+            .catch(err => console.error('Data load failed:', err));
+    } else if (pageTitle === 'Transactions') {
+        /* code for transactions page */
+        // fetch account data 
+        fetch('../assets/data/account-data.json')
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                // set account data array
+                let accountArr = data;
+
+
+                // fetch transaction data
+                fetch('../assets/data/transaction-data.json')
+                    .then(response => response.json()) 
+                    .then(data2 => {
+                        let transactionArr = data2;
+
+                        // Set Transaction Page Up
+                        setTransactionPage();
+
+                        // render data into page
+                        renderTransactionData(accountArr, transactionArr);
+
+
+
+
+
+
+
+
+                    })
+                    .catch(err => console.error('Data load failed:', err));
+            })
+            .catch(err => console.error('Data load failed:', err));
+
+        
+    } else if (pageTitle === 'Account-Details') {
+        /* code for account details page */
+    }
+
 };
 
 
 
+
+function renderAccountData(accountsArray) {
+    // create accounts flex box
+    let accountsFlexbox = document.createElement('div');
+    accountsFlexbox.classList.add('accounts-flexbox');
+
+    // for each account, append a child flex item to the accounts flexbox
+    accountsArray.forEach((account) => {
+        let accountPanel = document.createElement('div');
+        accountPanel.classList.add('account-panel');
+        accountPanel.style.backgroundColor = account.color;
+        
+        // add account name, balance, and buttons to account panel
+        let accountName = document.createElement('h2');
+        accountName.classList.add('account-name');
+        accountName.classList.add('item');
+        accountName.textContent = account.name;
+        accountPanel.appendChild(accountName);
+
+        let accountBalance = document.createElement('p');
+        accountBalance.classList.add('account-balance');
+        accountBalance.classList.add('item');
+        accountBalance.textContent = `Balance: ${formatter.format(account.balance)}`;
+        accountPanel.appendChild(accountBalance);
+        
+        let deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.classList.add('item');
+        deleteBtn.textContent = 'Delete Account';
+        accountPanel.appendChild(deleteBtn);
+
+        let viewDetailsBtn = document.createElement('button');
+        viewDetailsBtn.classList.add('view-details-btn');
+        viewDetailsBtn.classList.add('item');
+        viewDetailsBtn.textContent = 'View Details >';
+        accountPanel.appendChild(viewDetailsBtn);
+
+        // Add event listeners to the buttons
+        deleteBtn = accountPanel.children[2]; // Get the delete button
+        deleteBtn.addEventListener('click', function() {
+            // Handle account deletion logic here
+            alert(`Delete action currently unavailable. In the future, you would delete account with ID: ${account.id}`);
+        });
+        viewDetailsBtn = accountPanel.children[3]; // Get the view details button
+        viewDetailsBtn.addEventListener('click', function() {
+            // Handle view details logic here
+            alert(`View details action currently unavailable. In the future, you would navigate to the account details page for account with ID: ${account.id}`);
+        });
+
+        // append account panel to accounts flexbox
+        accountsFlexbox.appendChild(accountPanel);
+        });
+
+    main.appendChild(accountsFlexbox);
+};
+
+function renderDashboardData() {
+    /* code to render dashboard data */
+
+}
+
+
+function renderTransactionData(accountData, transactionData) {
+    /* code to render transaction data */
+    // get elements
+    let transactionsTable = document.getElementsByClassName('transactions-table')[0];
+
+    // add account name to each transaction based on the account id
+    transactionData.forEach(transaction => {
+        let account = accountData.find(account => account.id === transaction.accountId);
+
+        transaction.accountName = account ? account.name : 'Unknown Account';
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Set table headers
+    let headerRow = document.createElement('tr');
+    if (transactionData.length > 0) {
+        Object.keys(transactionData[0]).forEach(key => {
+            if (key === 'accountId') return; // skip accountId since we are displaying accountName instead
+
+            let th = document.createElement('th');
+            th.textContent = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize first letter (e.g., "Amount" instead of "amount")
+            headerRow.appendChild(th);
+        });
+        // add extra header for update column
+        let updateTh = document.createElement('th');
+        updateTh.textContent = 'Update';
+        headerRow.appendChild(updateTh);
+    }
+
+    // Append header row to table
+    transactionsTable.appendChild(headerRow);
+
+    // set table rows with transaction data, and also use account data to set the color of the row based on the account the transaction is associated with (this is a stretch goal, but would be a nice visual touch)
+    transactionData.forEach(transaction => {
+        let row = document.createElement('tr');
+        Object.entries(transaction).forEach(([key, value]) => {
+            if (key === 'accountId') return; // skip accountId since we are displaying accountName instead
+
+            let td = document.createElement('td');
+            td.textContent = value;
+            row.appendChild(td);
+        });
+
+        // add edit and delete buttons to end of row
+        let updateTd = document.createElement('td');
+        let editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        updateTd.appendChild(editBtn);
+        let deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        updateTd.appendChild(deleteBtn);
+        row.appendChild(updateTd);
+
+        transactionsTable.appendChild(row);
+        console.log(`Transaction Row Added: ${JSON.stringify(row)}`);
+    });
+}
+
+function setTransactionPage() {
+    // Create container div for the row of filters
+    let filtersContainer = document.createElement('div');
+    filtersContainer.classList.add('filters-container');
+
+    // create table div for the transactions table
+    let transactionsDiv = document.createElement('div');
+
+    // create transactions table
+    let transactionsTable = document.createElement('table');
+    transactionsTable.classList.add('transactions-table');
+
+
+
+
+    // append filters to filters container
+
+
+
+    // append table to its div
+    transactionsDiv.appendChild(transactionsTable);
+
+    // append filters container and transactions div to main
+    main.appendChild(filtersContainer);
+    main.appendChild(transactionsDiv);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Helper functions, should be on different file */
+
+// Format a number as currency
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});

@@ -17,9 +17,16 @@ home screen.
 
 Known issues or limitations:
 - Be honest about what is incomplete or broken. 
--- In mobile view, the navigation is visible when you first load in or switch pages, and the hamburger button needs to be pressed to actually view the page you navigated to.
+-- In mobile view
+    - The navigation is visible when you first load in or switch pages, and the hamburger button needs to be pressed to actually view the page you navigated to.
+    - On the transactions page, the table expands beyond the screen size
 -- Transactions Table
-    Move Account Name to the beginning of the row and change to read "Account"
+    - Move Account Name to the beginning of the row and change to read "Account"
+    - Currently, Transactions will show ALL transaction history no matter what, so if there were hundreds or thousands of records, they would ALL appear every time.
+-- Account value is not currently adjusted based on transaction history, making it inaccurate.
+-- Footer
+    - Add github repo link to the footer
+    - Specify it is a student project
 
 Changes from Phase 1 wireframes:
 - If any view differs significantly from your original wireframe, describe the change and

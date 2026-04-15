@@ -31,12 +31,17 @@ window.addEventListener('load', function() {
     
     /* add head to document 
         link stylesheet(s)
-        link script(s) // If needed, currently not
+        link script(s)
     */
     this.document.head.innerHTML += `
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/accounts.css">
         <link rel="stylesheet" href="../assets/css/transactions.css">
+        <link rel="stylesheet" href="../assets/css/modals.css">
+
+        <script defer src="../assets/scripts/modals.js"></script>
+        <script defer src="../assets/scripts/transactions.js></script>
+
     `;
 
     /* add header to document */
@@ -206,7 +211,7 @@ function combineAccountAndTransactionData(accountData, transactionData) {
     // for each
 }
 
-
+/* render the transaction table */
 function renderTransactionData(accountData, transactionData) {
     /* code to render transaction data */
     // get elements
@@ -281,6 +286,36 @@ function renderTransactionData(accountData, transactionData) {
 }
 
 function setTransactionPage() {
+    // get necessary variables
+    let main = document.getElementsByTagName("main")[0];
+
+
+    // Load Shared Page Data (currently at top of main.js, move to different file then import here? Or leave there?)
+
+
+    // Create div to hold new transactions and buttons. This would ideally be in line with the header but probably will be just under it for now.
+    let addBtnsContainer = document.createElement("div");
+    addBtnsContainer.classList.add('add-btns-container');
+
+    // Append buttons to the addBtnsContainer
+    let addIncomeBtn = document.createElement("button");
+    addIncomeBtn.classList.add("add-income-btn");
+    addIncomeBtn.textContent = "Add Income";
+
+    let addExpenseBtn = document.createElement("button");
+    addExpenseBtn.classList.add("add-expense-btn");
+    addExpenseBtn.textContent = "Add Expense";
+
+    addBtnsContainer.appendChild(addIncomeBtn);
+    addBtnsContainer.appendChild(addExpenseBtn);
+
+    addIncomeBtn.addEventListener('click', () => CreateModalNewTransaction("income"));
+    addExpenseBtn.addEventListener('click', () => CreateModalNewTransaction("expense"));
+
+    // append add transaction buttons to the main element
+    main.appendChild(addBtnsContainer);
+
+    
     // Create container div for the row of filters
     let filtersContainer = document.createElement('div');
     filtersContainer.classList.add('filters-container');
@@ -305,7 +340,6 @@ function setTransactionPage() {
     // append filters container and transactions div to main
     main.appendChild(filtersContainer);
     main.appendChild(transactionsDiv);
-
 }
 
 
@@ -330,3 +364,196 @@ const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
 });
+
+
+/* new/create transaction modal */
+function CreateModalNewTransaction(transactionType) {
+    // create modal div
+    let modalNewTransaction = document.createElement("div");
+    modalNewTransaction.classList.add("modal");
+    modalNewTransaction.id = "transaction-modal";
+
+    // create modal-content div
+    let modalContentDiv = document.createElement("div");
+    modalContentDiv.classList.add("modal-content");
+
+    modalNewTransaction.appendChild(modalContentDiv);
+
+
+    // create modal-content header div
+    let modalContentDivHeader = document.createElement("div");
+    modalContentDivHeader.classList.add("modal-header");
+
+    modalContentDiv.appendChild(modalContentDivHeader);
+
+
+    // add close span and header to modal
+    let closeSpan = document.createElement("span");
+    closeSpan.classList.add("close");
+    closeSpan.innerHTML = "&times;"
+
+    let modalHeaderText = document.createElement("h2");
+    modalHeaderText.textContent = "New Transaction";
+
+    modalContentDivHeader.appendChild(closeSpan);
+    modalContentDivHeader.appendChild(modalHeaderText);
+
+    // add onclick to close span
+    closeSpan.addEventListener('click', function() {
+        modalNewTransaction.style.display = "none";
+    });
+
+    
+
+
+    // create input area (whatchamacallthis?)
+    // The form below will contain all transaction input fields.
+
+    // create input fields and add to input area
+    let form = document.createElement('form');
+    form.classList.add('transaction-form');
+    form.noValidate = true;
+
+    function createField(labelText, input) {
+        let wrapper = document.createElement('div');
+        wrapper.classList.add('form-row');
+
+        let label = document.createElement('label');
+        label.textContent = labelText;
+        label.appendChild(document.createElement('br'));
+        label.appendChild(input);
+
+        let error = document.createElement('span');
+        error.classList.add('field-error');
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(error);
+
+        return {wrapper, input, error};
+    }
+
+    let typeInput = document.createElement('input');
+    typeInput.type = 'text';
+    typeInput.name = 'transactionType';
+    typeInput.value = transactionType;
+    typeInput.readOnly = true;
+
+    let dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.name = 'transactionDate';
+    dateInput.required = true;
+
+    let amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.name = 'transactionAmount';
+    amountInput.required = true;
+    amountInput.step = '0.01';
+    amountInput.min = '0.01';
+    amountInput.placeholder = '0.00';
+
+    let accountInput = document.createElement('input');
+    accountInput.type = 'text';
+    accountInput.name = 'transactionAccount';
+    accountInput.required = true;
+    accountInput.placeholder = 'Account name';
+
+    let typeField = createField('Transaction Type', typeInput);
+    let dateField = createField('Date', dateInput);
+    let amountField = createField('Amount', amountInput);
+    let accountField = createField('Account', accountInput);
+
+    form.appendChild(typeField.wrapper);
+    form.appendChild(dateField.wrapper);
+    form.appendChild(amountField.wrapper);
+    form.appendChild(accountField.wrapper);
+
+    let actions = document.createElement('div');
+    actions.classList.add('modal-actions');
+
+    let saveBtn = document.createElement('button');
+    saveBtn.type = 'submit';
+    saveBtn.textContent = 'Save Transaction';
+
+    let cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', function() {
+        modalNewTransaction.remove();
+    });
+
+    actions.appendChild(saveBtn);
+    actions.appendChild(cancelBtn);
+    form.appendChild(actions);
+    modalContentDiv.appendChild(form);
+
+    function clearErrors() {
+        [dateField, amountField, accountField].forEach(field => {
+            field.error.textContent = '';
+            field.input.classList.remove('invalid');
+        });
+    }
+
+    function validateForm() {
+        clearErrors();
+        let valid = true;
+
+        if (!dateInput.value) {
+            dateField.error.textContent = 'Please choose a date.';
+            dateInput.classList.add('invalid');
+            valid = false;
+        }
+
+        let amountValue = parseFloat(amountInput.value);
+        if (!amountInput.value || Number.isNaN(amountValue) || amountValue <= 0) {
+            amountField.error.textContent = 'Enter an amount greater than 0.';
+            amountInput.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!accountInput.value.trim()) {
+            accountField.error.textContent = 'Account name is required.';
+            accountInput.classList.add('invalid');
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (!validateForm()) return;
+        alert(`Transaction ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(amountInput.value))} on ${dateInput.value}`);
+        modalNewTransaction.remove();
+    });
+
+    [dateInput, amountInput, accountInput].forEach(input => {
+        input.addEventListener('input', function() {
+            if (input.classList.contains('invalid')) {
+                input.classList.remove('invalid');
+                let row = input.closest('.form-row');
+                if (row) row.querySelector('.field-error').textContent = '';
+            }
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modalNewTransaction) {
+            modalNewTransaction.style.display = "none";
+        }
+    }
+
+    // Add modal to the page and display it
+    document.body.appendChild(modalNewTransaction);
+    modalNewTransaction.style.display = "block";
+};  

@@ -3,6 +3,8 @@ I love you! K bye! <3
 
 Project title and one-paragraph description:
 - What the application does and who it is for.
+-- This application will allow the user to input their income and expenses manually to keep track of their personal finances on their own computer.
+-- Who is it for?
 
 How to run it:
 - Instructions for viewing the project locally. Since there is no build step, this should be
@@ -16,7 +18,10 @@ home screen.
 Known issues or limitations:
 - Be honest about what is incomplete or broken. 
 -- In mobile view, the navigation is visible when you first load in or switch pages, and the hamburger button needs to be pressed to actually view the page you navigated to.
+-- Transactions Table
+    Move Account Name to the beginning of the row and change to read "Account"
 
 Changes from Phase 1 wireframes:
 - If any view differs significantly from your original wireframe, describe the change and
 your reason for it.
+-- There are changes in the order of table headers in the Transactions table largely because aesthetic fixes take time. Ideally, by the end of the project, they will match or otherwise be more intuitive.

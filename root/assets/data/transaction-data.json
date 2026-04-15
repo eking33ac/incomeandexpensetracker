@@ -1,29 +1,82 @@
 [
     {
         "id": 1,
-        "accountId": 2,
+        "name": "Tutor Salary",
+        "accountId": 1,
         "amount": 500.00,
         "date": "2026-05-15",
         "type": "Income",
-        "category": "Salary",
-        "account": "Checking"
+        "category": ["Salary"],
+        "method": "Bank Transfer"
     },
     {
         "id": 2,
+        "name": "Grocery Shopping",
         "accountId": 3,
         "amount": 50.00,
         "date": "2026-05-16",
         "type": "Expense",
         "category": ["Food", "Groceries"],
-        "account": "Checking"
+        "method": "Cash"
     },
     {
         "id": 3,
+        "name": "Electricity Bill",
         "accountId": 1,
         "amount": 100.00,
         "date": "2026-05-16",
         "type": "Expense",
-        "category": "Utilities",
-        "account": "Checking"
+        "category": ["Utilities"],
+        "method": "Bank Transfer"
+    },
+    {
+        "id": 4,
+        "name": "Coffee",
+        "accountId": 1,
+        "amount": 5.97,
+        "date": "2026-05-17",
+        "type": "Expense",
+        "category": ["Cafe", "College"],
+        "method": "Card"
+    },
+    {
+        "id": 5,
+        "name": "Grocery Shopping",
+        "accountId": 1,
+        "amount": 55.00,
+        "date": "2026-05-17",
+        "type": "Expense",
+        "category": ["Food", "Groceries"],
+        "method": "Card"
+    },
+    {
+        "id": 6,
+        "name": "Water Bill",
+        "accountId": 1,
+        "amount": 50.00,
+        "date": "2026-05-18",
+        "type": "Expense",
+        "category": ["Utilities"],
+        "method": "Bank Transfer"
+    },
+    {
+        "id": 7,
+        "name": "Birthday Gift",
+        "accountId": 3,
+        "amount": 20.00,
+        "date": "2026-05-19",
+        "type": "Income",
+        "category": ["Gifts"],
+        "method": "Cash"
+    },
+    {
+        "id": 8,
+        "name": "Gift Shopping",
+        "accountId": 1,
+        "amount": 58.00,
+        "date": "2026-05-20",
+        "type": "Expense",
+        "category": ["Gifts"],
+        "method": "Card"
     }
 ]

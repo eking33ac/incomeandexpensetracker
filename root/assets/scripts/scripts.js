@@ -201,15 +201,23 @@ function renderDashboardData() {
 }
 
 
+function combineAccountAndTransactionData(accountData, transactionData) {
+    /* code to combine account and transaction data */
+    // for each
+}
+
+
 function renderTransactionData(accountData, transactionData) {
     /* code to render transaction data */
     // get elements
     let transactionsTable = document.getElementsByClassName('transactions-table')[0];
 
-    // add account name to each transaction based on the account id
-    transactionData.forEach(transaction => {
+    // add account name to each transaction based on the account id and it appears after the transaction name (this is a stretch goal, but would be a nice visual touch)
+    transactionData.forEach(transaction => {        
         let account = accountData.find(account => account.id === transaction.accountId);
 
+
+        // if account is found, set transaction account name to account name, otherwise set it to "Unknown Account"
         transaction.accountName = account ? account.name : 'Unknown Account';
     });
 
@@ -229,6 +237,7 @@ function renderTransactionData(accountData, transactionData) {
     let headerRow = document.createElement('tr');
     if (transactionData.length > 0) {
         Object.keys(transactionData[0]).forEach(key => {
+            if (key === 'id') return; // skip id since we don't need to display it
             if (key === 'accountId') return; // skip accountId since we are displaying accountName instead
 
             let th = document.createElement('th');
@@ -248,8 +257,9 @@ function renderTransactionData(accountData, transactionData) {
     transactionData.forEach(transaction => {
         let row = document.createElement('tr');
         Object.entries(transaction).forEach(([key, value]) => {
+            if (key === 'id') return; // skip id since we don't need to display it
             if (key === 'accountId') return; // skip accountId since we are displaying accountName instead
-
+            
             let td = document.createElement('td');
             td.textContent = value;
             row.appendChild(td);

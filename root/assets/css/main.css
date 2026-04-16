@@ -80,15 +80,17 @@ nav a:hover {
    color: var(--temp-color);
 }
 
-/* This is the three lines */
+/* Hamburger button */
 nav #hamburger-btn {
    /* show full button position */
    /* border-style: solid;
    border-width: 2px;
    border-color: var(--temp-color); */
    /* background-color: var(--temp-color); */ /* having a background color makes it tiny???? */
+   background: none; /* remove default button background */
+   border: none; /* remove default button border */
    margin: 1rem 0; /* add some margin to separate it from the nav links and bring down from top-top of screen */
-
+   text-align: left; /* left align the hamburger symbol */
 
    /* optional */
    font-size: 3rem; /* make the hamburger menu bigger and easier to click */
@@ -130,17 +132,8 @@ footer {
       max-width: 100%; 
       }
 
-   /* Navigation inactive currently same as on desktop
-   nav.inactive {
-      width: 100px;
-      min-width: 100px; 
-      max-width: 100px; 
-      background-color: var(--bg-main);
-   }
+   /* Navigation inactive for mobile */
    nav.inactive a {
       display: none;
    }
-   nav.inactive #hamburger-btn {
-      color: var(--bg-2);   
-   } */
 }

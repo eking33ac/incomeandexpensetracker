@@ -20,6 +20,7 @@ function initPage() {
 }
 
 // create common nav, footer, and make each page have it's title as the header
+// ensure navigation hamburger works
 function buildLayout() {
     const pageTitle = document.title;
 
@@ -40,4 +41,11 @@ function buildLayout() {
     const hamburgerBtn = document.getElementById("hamburger-btn");
     hamburgerBtn.addEventListener("click", () => {
         nav.classList.toggle("inactive");
-    });}
+    });
+
+    /* add footer to document */
+    footer.innerHTML += `
+        <p>&copy; 2026 Income and Expense Tracker. All rights reserved.</p>
+        <a href="https://github.com/eking33ac/incomeandexpensetracker">GitHub Repository</a>
+    `;
+}

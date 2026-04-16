@@ -62,6 +62,12 @@ function CreateModalNewTransaction(transactionType) {
     }
 
     // create input fields
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = 'transactionName';
+    nameInput.required = true;
+    nameInput.placeholder = 'Transaction name';
+
     const typeInput = document.createElement('input');
     typeInput.type = 'text';
     typeInput.name = 'transactionType';
@@ -82,22 +88,139 @@ function CreateModalNewTransaction(transactionType) {
     amountInput.placeholder = '0.00';
 
     // make this a drop down
-    const accountInput = document.createElement('input');
-    accountInput.type = 'text';
-    accountInput.name = 'transactionAccount';
-    accountInput.required = true;
-    accountInput.placeholder = 'Account name';
+    const accountSelect = document.createElement('select');
+    accountSelect.name = 'transactionAccount';
+    accountSelect.required = true;
+    // Add default option
+    const defaultAccountOption = document.createElement('option');
+    defaultAccountOption.value = '';
+    defaultAccountOption.textContent = 'Select an account';
+    defaultAccountOption.disabled = true;
+    defaultAccountOption.selected = true;
+    accountSelect.appendChild(defaultAccountOption);
+    // Fetch and populate accounts
+    fetch('../assets/data/account-data.json')
+        .then(response => response.json())
+        .then(accounts => {
+            accounts.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.id;
+                option.textContent = account.name;
+                accountSelect.appendChild(option);
+            });
+        })
+        .catch(err => console.error('Failed to load accounts:', err));
+
+    const categoryContainer = document.createElement('div');
+    categoryContainer.classList.add('custom-select');
+    categoryContainer.style.position = 'relative';
+    const categoryButton = document.createElement('button');
+    categoryButton.type = 'button';
+    categoryButton.textContent = 'Select categories';
+    categoryButton.style.width = '100%';
+    categoryButton.style.textAlign = 'left';
+    categoryButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        categoryDropdown.style.display = categoryDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    categoryContainer.appendChild(categoryButton);
+    const categoryDropdown = document.createElement('div');
+    categoryDropdown.classList.add('custom-dropdown');
+    categoryDropdown.style.display = 'none';
+    categoryDropdown.style.position = 'absolute';
+    categoryDropdown.style.top = '100%';
+    categoryDropdown.style.left = '0';
+    categoryDropdown.style.width = '100%';
+    categoryDropdown.style.background = 'white';
+    categoryDropdown.style.border = '1px solid #ccc';
+    categoryDropdown.style.maxHeight = '200px';
+    categoryDropdown.style.overflowY = 'auto';
+    categoryContainer.appendChild(categoryDropdown);
+    // Fetch and populate categories as checkboxes
+    fetch('../assets/data/categories.json')
+        .then(response => response.json())
+        .then(categories => {
+            categories.forEach(cat => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'transactionCategory';
+                checkbox.value = cat.id;
+                checkbox.addEventListener('change', function() {
+                    updateCategoryButton();
+                    if (categoryContainer.classList.contains('invalid')) {
+                        categoryContainer.classList.remove('invalid');
+                        categoryField.error.textContent = '';
+                    }
+                });
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(cat.name));
+                categoryDropdown.appendChild(label);
+                categoryDropdown.appendChild(document.createElement('br'));
+            });
+        })
+        .catch(err => console.error('Failed to load categories:', err));
+
+    function updateCategoryButton() {
+        const checkedBoxes = categoryDropdown.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) {
+            categoryButton.textContent = 'Select categories';
+        } else {
+            const names = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim());
+            categoryButton.textContent = names.join(', ');
+        }
+    }
+
+    const methodSelect = document.createElement('select');
+    methodSelect.name = 'transactionMethod';
+    methodSelect.required = true;
+    // Add default option
+    const defaultMethodOption = document.createElement('option');
+    defaultMethodOption.value = '';
+    defaultMethodOption.textContent = 'Select a method';
+    defaultMethodOption.disabled = true;
+    defaultMethodOption.selected = true;
+    methodSelect.appendChild(defaultMethodOption);
+    // Fetch and populate methods
+    fetch('../assets/data/methods.json')
+        .then(response => response.json())
+        .then(methods => {
+            methods.forEach(method => {
+                const option = document.createElement('option');
+                option.value = method.id;
+                option.textContent = method.name;
+                methodSelect.appendChild(option);
+            });
+        })
+        .catch(err => console.error('Failed to load methods:', err));
 
 
+    const nameField = createField('Transaction Name', nameInput);
     const typeField = createField('Transaction Type', typeInput);
     const dateField = createField('Date', dateInput);
     const amountField = createField('Amount', amountInput);
-    const accountField = createField('Account', accountInput);
+    const accountField = createField('Account', accountSelect);
+    // Category field (custom wrapper for checkboxes)
+    const categoryWrapper = document.createElement('div');
+    categoryWrapper.classList.add('form-row');
+    const categoryLabel = document.createElement('label');
+    categoryLabel.textContent = 'Category';
+    categoryLabel.appendChild(document.createElement('br'));
+    categoryLabel.appendChild(categoryContainer);
+    const categoryError = document.createElement('span');
+    categoryError.classList.add('field-error');
+    categoryWrapper.appendChild(categoryLabel);
+    categoryWrapper.appendChild(categoryError);
+    const categoryField = { input: categoryContainer, error: categoryError };
+    const methodField = createField('Method', methodSelect);
 
+    form.appendChild(nameField.wrapper);
     form.appendChild(typeField.wrapper);
     form.appendChild(dateField.wrapper);
     form.appendChild(amountField.wrapper);
     form.appendChild(accountField.wrapper);
+    form.appendChild(categoryWrapper);
+    form.appendChild(methodField.wrapper);
 
     // create action buttons
     const actions = document.createElement('div');
@@ -121,15 +244,21 @@ function CreateModalNewTransaction(transactionType) {
 
     // validation logic
     function clearErrors() {
-        [dateField, amountField, accountField].forEach(field => {
+        [nameField, dateField, amountField, accountField, categoryField, methodField].forEach(field => {
+            if (field.input) field.input.classList.remove('invalid');
             field.error.textContent = '';
-            field.input.classList.remove('invalid');
         });
     }
 
     function validateForm() {
         clearErrors();
         let valid = true;
+
+        if (!nameInput.value.trim()) {
+            nameField.error.textContent = 'Transaction name is required.';
+            nameInput.classList.add('invalid');
+            valid = false;
+        }
 
         if (!dateInput.value) {
             dateField.error.textContent = 'Please choose a date.';
@@ -144,9 +273,22 @@ function CreateModalNewTransaction(transactionType) {
             valid = false;
         }
 
-        if (!accountInput.value.trim()) {
+        if (!accountSelect.value.trim()) {
             accountField.error.textContent = 'Account name is required.';
-            accountInput.classList.add('invalid');
+            accountSelect.classList.add('invalid');
+            valid = false;
+        }
+
+        const checkedBoxes = categoryContainer.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) {
+            categoryField.error.textContent = 'Please select at least one category.';
+            categoryContainer.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!methodSelect.value) {
+            methodField.error.textContent = 'Please select a method.';
+            methodSelect.classList.add('invalid');
             valid = false;
         }
 
@@ -156,12 +298,19 @@ function CreateModalNewTransaction(transactionType) {
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         if (!validateForm()) return;
-        alert(`Transaction ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(amountInput.value))} on ${dateInput.value}`);
+        const checkedBoxes = categoryContainer.querySelectorAll('input[type="checkbox"]:checked');
+        const categoryNames = Array.from(checkedBoxes).map(cb => {
+            const label = cb.parentElement;
+            return label.textContent.trim();
+        }).join(', ');
+        const selectedMethodOption = methodSelect.options[methodSelect.selectedIndex];
+        const methodName = selectedMethodOption.textContent;
+        alert(`Transaction "${nameInput.value}" ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(amountInput.value))} on ${dateInput.value} in ${categoryNames} via ${methodName}`);
         modalNewTransaction.remove();
     });
 
     // clear errors on input
-    [dateInput, amountInput, accountInput].forEach(input => {
+    [nameInput, dateInput, amountInput, accountSelect].forEach(input => {
         input.addEventListener('input', function() {
             if (input.classList.contains('invalid')) {
                 input.classList.remove('invalid');
@@ -169,6 +318,13 @@ function CreateModalNewTransaction(transactionType) {
                 if (row) row.querySelector('.field-error').textContent = '';
             }
         });
+    });
+    methodSelect.addEventListener('change', function() {
+        if (methodSelect.classList.contains('invalid')) {
+            methodSelect.classList.remove('invalid');
+            const row = methodSelect.closest('.form-row');
+            if (row) row.querySelector('.field-error').textContent = '';
+        }
     });
 
     // close modal when clicking outside

@@ -87,3 +87,15 @@
 .modal-actions button[type="button"] {
   background-color: #888;
 }
+
+.custom-dropdown label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.custom-dropdown label:hover {
+  background-color: #f0f0f0;
+}

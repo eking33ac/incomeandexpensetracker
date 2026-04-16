@@ -4,13 +4,10 @@
 const main = document.querySelector("main");
 
 function initTransactionsPage() {
-    /* Fetch account data */
-    fetch('../assets/data/account-data.json')
-        .then(response => response.json())
+    /* Fetch account and transaction data using data.js */
+    fetchAccountData()
         .then(accountData => {
-            /* fetch transaction data */
-            fetch('../assets/data/transaction-data.json')
-                .then(response => response.json())
+            fetchTransactionData()
                 .then(transactionData => {
                     setTransactionPage();
                     renderTransactionData(accountData, transactionData);
@@ -128,6 +125,11 @@ function renderTransactionData(accountData, transactionData) {
                 const updateTd = document.createElement('td');
                 const editBtn = document.createElement('button');
                 editBtn.textContent = 'Edit';
+                // Attach transaction ID as a data attribute for later use
+                editBtn.dataset.transactionId = transaction.id;
+                editBtn.addEventListener('click', function() {
+                    CreateModalEditTransaction(transaction.id);
+                });
                 updateTd.appendChild(editBtn);
                 const deleteBtn = document.createElement('button');
                 deleteBtn.textContent = 'Delete';

@@ -4,10 +4,8 @@
 const main = document.querySelector("main");
 
 function initAccountsPage() {
-    /* fetch account data */
-    fetch('../assets/data/account-data.json')
-        .then(response => response.json())
-        // Render account data
+    /* fetch account data using data.js */
+    fetchAccountData()
         .then(data => renderAccountData(data))
         .catch(err => console.error('Failed to load account data:', err));
 }

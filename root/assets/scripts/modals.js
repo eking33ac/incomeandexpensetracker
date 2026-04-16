@@ -2,143 +2,96 @@
 
 /* Create and manage transaction modals with client-side form validation */
 
-function CreateModalNewTransaction(transactionType) {
-    // create modal div
-    const modalNewTransaction = document.createElement("div");
-    modalNewTransaction.classList.add("modal");
-    modalNewTransaction.id = "transaction-modal";
+// Helper: Create the basic modal structure
+function createModalSkeleton() {
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+    modal.id = "transaction-modal";
+    const content = document.createElement("div");
+    content.classList.add("modal-content");
+    modal.appendChild(content);
+    return { modal, content };
+}
 
-    // create modal-content div
-    const modalContentDiv = document.createElement("div");
-    modalContentDiv.classList.add("modal-content");
-    modalNewTransaction.appendChild(modalContentDiv);
-
-    // create modal-content header div
-    const modalContentDivHeader = document.createElement("div");
-    modalContentDivHeader.classList.add("modal-header");
-    modalContentDiv.appendChild(modalContentDivHeader);
-
-    // add close span and header to modal
+// Helper: Create and append the modal header
+function createModalHeader(content, titleText = "New Transaction") {
+    const header = document.createElement("div");
+    header.classList.add("modal-header");
     const closeSpan = document.createElement("span");
     closeSpan.classList.add("close");
     closeSpan.innerHTML = "&times;";
-    // add checking the user wants to close it (if anything has been added by them)
-    closeSpan.addEventListener('click', function() {
-        modalNewTransaction.remove();
-    });
+    const title = document.createElement("h2");
+    title.textContent = titleText;
+    header.appendChild(closeSpan);
+    header.appendChild(title);
+    content.appendChild(header);
+    return closeSpan; // Return for event attachment
+}
 
-    const modalHeaderText = document.createElement("h2");
-    modalHeaderText.textContent = "New Transaction";
-
-    modalContentDivHeader.appendChild(closeSpan);
-    modalContentDivHeader.appendChild(modalHeaderText);
-
-
-
-
-
-    // create form
+// Helper: Create and append the form
+function createForm(content) {
     const form = document.createElement('form');
     form.classList.add('transaction-form');
     form.noValidate = true;
+    content.appendChild(form);
+    return form;
+}
 
-    function createField(labelText, input) {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('form-row');
+// Helper: Generic field creator
+function createField(labelText, input) {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('form-row');
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    label.appendChild(document.createElement('br'));
+    label.appendChild(input);
+    const error = document.createElement('span');
+    error.classList.add('field-error');
+    wrapper.appendChild(label);
+    wrapper.appendChild(error);
+    return { wrapper, input, error };
+}
 
-        const label = document.createElement('label');
-        label.textContent = labelText;
-        label.appendChild(document.createElement('br'));
-        label.appendChild(input);
-
-        // display errors UNDER the appropriate fields
-        const error = document.createElement('span');
-        error.classList.add('field-error');
-
-        wrapper.appendChild(label);
-        wrapper.appendChild(error);
-
-        return { wrapper, input, error };
-    }
-
-    // create input fields
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.name = 'transactionName';
-    nameInput.required = true;
-    nameInput.placeholder = 'Transaction name';
-
-    const typeInput = document.createElement('input');
-    typeInput.type = 'text';
-    typeInput.name = 'transactionType';
-    typeInput.value = transactionType;
-    typeInput.readOnly = true;
-
-    const dateInput = document.createElement('input');
-    dateInput.type = 'date';
-    dateInput.name = 'transactionDate';
-    dateInput.required = true;
-
-    const amountInput = document.createElement('input');
-    amountInput.type = 'number';
-    amountInput.name = 'transactionAmount';
-    amountInput.required = true;
-    amountInput.step = '0.01';
-    amountInput.min = '0.01';
-    amountInput.placeholder = '0.00';
-
-    // make this a drop down
-    const accountSelect = document.createElement('select');
-    accountSelect.name = 'transactionAccount';
-    accountSelect.required = true;
-    // Add default option
-    const defaultAccountOption = document.createElement('option');
-    defaultAccountOption.value = '';
-    defaultAccountOption.textContent = 'Select an account';
-    defaultAccountOption.disabled = true;
-    defaultAccountOption.selected = true;
-    accountSelect.appendChild(defaultAccountOption);
-    // Fetch and populate accounts
-    fetch('../assets/data/account-data.json')
-        .then(response => response.json())
-        .then(accounts => {
-            accounts.forEach(account => {
+// Helper: Populate a select element from JSON data
+function populateSelect(select, dataUrl, valueProp, textProp) {
+    fetchDataUrl(dataUrl)
+        .then(data => {
+            data.forEach(item => {
                 const option = document.createElement('option');
-                option.value = account.id;
-                option.textContent = account.name;
-                accountSelect.appendChild(option);
+                option.value = item[valueProp];
+                option.textContent = item[textProp];
+                select.appendChild(option);
             });
         })
-        .catch(err => console.error('Failed to load accounts:', err));
+        .catch(err => console.error(`Failed to load ${dataUrl}:`, err));
+}
 
-    const categoryContainer = document.createElement('div');
-    categoryContainer.classList.add('custom-select');
-    categoryContainer.style.position = 'relative';
-    const categoryButton = document.createElement('button');
-    categoryButton.type = 'button';
-    categoryButton.textContent = 'Select categories';
-    categoryButton.style.width = '100%';
-    categoryButton.style.textAlign = 'left';
-    categoryButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        categoryDropdown.style.display = categoryDropdown.style.display === 'block' ? 'none' : 'block';
-    });
-    categoryContainer.appendChild(categoryButton);
-    const categoryDropdown = document.createElement('div');
-    categoryDropdown.classList.add('custom-dropdown');
-    categoryDropdown.style.display = 'none';
-    categoryDropdown.style.position = 'absolute';
-    categoryDropdown.style.top = '100%';
-    categoryDropdown.style.left = '0';
-    categoryDropdown.style.width = '100%';
-    categoryDropdown.style.background = 'white';
-    categoryDropdown.style.border = '1px solid #ccc';
-    categoryDropdown.style.maxHeight = '200px';
-    categoryDropdown.style.overflowY = 'auto';
-    categoryContainer.appendChild(categoryDropdown);
-    // Fetch and populate categories as checkboxes
-    fetch('../assets/data/categories.json')
-        .then(response => response.json())
+// Helper: Create the custom category field
+function createCategoryField() {
+    const container = document.createElement('div');
+    container.classList.add('custom-select');
+    container.style.position = 'relative';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'Select categories';
+    button.style.width = '100%';
+    button.style.textAlign = 'left';
+    container.appendChild(button);
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('custom-dropdown');
+    dropdown.style.display = 'none';
+    dropdown.style.position = 'absolute';
+    dropdown.style.top = '100%';
+    dropdown.style.left = '0';
+    dropdown.style.width = '100%';
+    dropdown.style.background = 'white';
+    dropdown.style.border = '1px solid #ccc';
+    dropdown.style.maxHeight = '200px';
+    dropdown.style.overflowY = 'auto';
+    container.appendChild(dropdown);
+
+    // Populate categories
+    fetchCategoriesData()
         .then(categories => {
             categories.forEach(cat => {
                 const label = document.createElement('label');
@@ -146,61 +99,54 @@ function CreateModalNewTransaction(transactionType) {
                 checkbox.type = 'checkbox';
                 checkbox.name = 'transactionCategory';
                 checkbox.value = cat.id;
-                checkbox.addEventListener('change', function() {
-                    updateCategoryButton();
-                    if (categoryContainer.classList.contains('invalid')) {
-                        categoryContainer.classList.remove('invalid');
-                        categoryField.error.textContent = '';
-                    }
-                });
                 label.appendChild(checkbox);
                 label.appendChild(document.createTextNode(cat.name));
-                categoryDropdown.appendChild(label);
-                categoryDropdown.appendChild(document.createElement('br'));
+                dropdown.appendChild(label);
+                dropdown.appendChild(document.createElement('br'));
             });
         })
         .catch(err => console.error('Failed to load categories:', err));
 
-    function updateCategoryButton() {
-        const checkedBoxes = categoryDropdown.querySelectorAll('input[type="checkbox"]:checked');
-        if (checkedBoxes.length === 0) {
-            categoryButton.textContent = 'Select categories';
-        } else {
-            const names = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim());
-            categoryButton.textContent = names.join(', ');
-        }
-    }
+    // Toggle dropdown
+    button.addEventListener('click', e => {
+        e.preventDefault();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
 
-    const methodSelect = document.createElement('select');
-    methodSelect.name = 'transactionMethod';
-    methodSelect.required = true;
-    // Add default option
-    const defaultMethodOption = document.createElement('option');
-    defaultMethodOption.value = '';
-    defaultMethodOption.textContent = 'Select a method';
-    defaultMethodOption.disabled = true;
-    defaultMethodOption.selected = true;
-    methodSelect.appendChild(defaultMethodOption);
-    // Fetch and populate methods
-    fetch('../assets/data/methods.json')
-        .then(response => response.json())
-        .then(methods => {
-            methods.forEach(method => {
-                const option = document.createElement('option');
-                option.value = method.id;
-                option.textContent = method.name;
-                methodSelect.appendChild(option);
-            });
-        })
-        .catch(err => console.error('Failed to load methods:', err));
+    // Update button text on checkbox change
+    dropdown.addEventListener('change', () => {
+        const checked = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+        button.textContent = checked.length ? Array.from(checked).map(cb => cb.nextSibling.textContent.trim()).join(', ') : 'Select categories';
+    });
 
+    return container;
+}
 
-    const nameField = createField('Transaction Name', nameInput);
-    const typeField = createField('Transaction Type', typeInput);
-    const dateField = createField('Date', dateInput);
-    const amountField = createField('Amount', amountInput);
-    const accountField = createField('Account', accountSelect);
-    // Category field (custom wrapper for checkboxes)
+// Helper: Create all form fields
+function createFormFields(form, transactionType) {
+    const fields = {};
+
+    // Standard fields
+    fields.name = createField('Transaction Name', Object.assign(document.createElement('input'), { type: 'text', name: 'transactionName', required: true, placeholder: 'Transaction name' }));
+    fields.type = createField('Transaction Type', Object.assign(document.createElement('input'), { type: 'text', name: 'transactionType', value: transactionType, readOnly: true }));
+    fields.date = createField('Date', Object.assign(document.createElement('input'), { type: 'date', name: 'transactionDate', required: true }));
+    fields.amount = createField('Amount', Object.assign(document.createElement('input'), { type: 'number', name: 'transactionAmount', required: true, step: '0.01', min: '0.01', placeholder: '0.00' }));
+
+    // Account select
+    const accountSelect = document.createElement('select');
+    accountSelect.name = 'transactionAccount';
+    accountSelect.required = true;
+    const defaultAccountOpt = document.createElement('option');
+    defaultAccountOpt.value = '';
+    defaultAccountOpt.textContent = 'Select an account';
+    defaultAccountOpt.disabled = true;
+    defaultAccountOpt.selected = true;
+    accountSelect.appendChild(defaultAccountOpt);
+    populateSelect(accountSelect, '../assets/data/account-data.json', 'id', 'name');
+    fields.account = createField('Account', accountSelect);
+
+    // Category field (custom)
+    const categoryContainer = createCategoryField();
     const categoryWrapper = document.createElement('div');
     categoryWrapper.classList.add('form-row');
     const categoryLabel = document.createElement('label');
@@ -211,40 +157,47 @@ function CreateModalNewTransaction(transactionType) {
     categoryError.classList.add('field-error');
     categoryWrapper.appendChild(categoryLabel);
     categoryWrapper.appendChild(categoryError);
-    const categoryField = { input: categoryContainer, error: categoryError };
-    const methodField = createField('Method', methodSelect);
+    fields.category = { input: categoryContainer, error: categoryError, wrapper: categoryWrapper };
 
-    form.appendChild(nameField.wrapper);
-    form.appendChild(typeField.wrapper);
-    form.appendChild(dateField.wrapper);
-    form.appendChild(amountField.wrapper);
-    form.appendChild(accountField.wrapper);
-    form.appendChild(categoryWrapper);
-    form.appendChild(methodField.wrapper);
+    // Method select
+    const methodSelect = document.createElement('select');
+    methodSelect.name = 'transactionMethod';
+    methodSelect.required = true;
+    const defaultMethodOpt = document.createElement('option');
+    defaultMethodOpt.value = '';
+    defaultMethodOpt.textContent = 'Select a method';
+    defaultMethodOpt.disabled = true;
+    defaultMethodOpt.selected = true;
+    methodSelect.appendChild(defaultMethodOpt);
+    populateSelect(methodSelect, '../assets/data/methods.json', 'id', 'name');
+    fields.method = createField('Method', methodSelect);
 
-    // create action buttons
+    // Append all fields
+    Object.values(fields).forEach(field => form.appendChild(field.wrapper));
+
+    return fields;
+}
+
+// Helper: Create action buttons
+function createModalActions(form, saveText = 'Save Transaction', cancelText = 'Cancel') {
     const actions = document.createElement('div');
     actions.classList.add('modal-actions');
-
     const saveBtn = document.createElement('button');
     saveBtn.type = 'submit';
-    saveBtn.textContent = 'Save Transaction';
-
+    saveBtn.textContent = saveText;
     const cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
-    cancelBtn.textContent = 'Cancel';
-    cancelBtn.addEventListener('click', function() {
-        modalNewTransaction.remove();
-    });
-
+    cancelBtn.textContent = cancelText;
     actions.appendChild(saveBtn);
     actions.appendChild(cancelBtn);
     form.appendChild(actions);
-    modalContentDiv.appendChild(form);
+    return { saveBtn, cancelBtn };
+}
 
-    // validation logic
+// Helper: Set up validation
+function setupValidation(form, fields, onSubmit) {
     function clearErrors() {
-        [nameField, dateField, amountField, accountField, categoryField, methodField].forEach(field => {
+        Object.values(fields).forEach(field => {
             if (field.input) field.input.classList.remove('invalid');
             field.error.textContent = '';
         });
@@ -254,87 +207,162 @@ function CreateModalNewTransaction(transactionType) {
         clearErrors();
         let valid = true;
 
-        if (!nameInput.value.trim()) {
-            nameField.error.textContent = 'Transaction name is required.';
-            nameInput.classList.add('invalid');
+        if (!fields.name.input.value.trim()) {
+            fields.name.error.textContent = 'Transaction name is required.';
+            fields.name.input.classList.add('invalid');
             valid = false;
         }
 
-        if (!dateInput.value) {
-            dateField.error.textContent = 'Please choose a date.';
-            dateInput.classList.add('invalid');
+        if (!fields.date.input.value) {
+            fields.date.error.textContent = 'Please choose a date.';
+            fields.date.input.classList.add('invalid');
             valid = false;
         }
 
-        const amountValue = parseFloat(amountInput.value);
-        if (!amountInput.value || Number.isNaN(amountValue) || amountValue <= 0) {
-            amountField.error.textContent = 'Enter an amount greater than 0.';
-            amountInput.classList.add('invalid');
+        const amountValue = parseFloat(fields.amount.input.value);
+        if (!fields.amount.input.value || Number.isNaN(amountValue) || amountValue <= 0) {
+            fields.amount.error.textContent = 'Enter an amount greater than 0.';
+            fields.amount.input.classList.add('invalid');
             valid = false;
         }
 
-        if (!accountSelect.value.trim()) {
-            accountField.error.textContent = 'Account name is required.';
-            accountSelect.classList.add('invalid');
+        if (!fields.account.input.value.trim()) {
+            fields.account.error.textContent = 'Account name is required.';
+            fields.account.input.classList.add('invalid');
             valid = false;
         }
 
-        const checkedBoxes = categoryContainer.querySelectorAll('input[type="checkbox"]:checked');
+        const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
         if (checkedBoxes.length === 0) {
-            categoryField.error.textContent = 'Please select at least one category.';
-            categoryContainer.classList.add('invalid');
+            fields.category.error.textContent = 'Please select at least one category.';
+            fields.category.input.classList.add('invalid');
             valid = false;
         }
 
-        if (!methodSelect.value) {
-            methodField.error.textContent = 'Please select a method.';
-            methodSelect.classList.add('invalid');
+        if (!fields.method.input.value) {
+            fields.method.error.textContent = 'Please select a method.';
+            fields.method.input.classList.add('invalid');
             valid = false;
         }
 
         return valid;
     }
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', event => {
         event.preventDefault();
-        if (!validateForm()) return;
-        const checkedBoxes = categoryContainer.querySelectorAll('input[type="checkbox"]:checked');
-        const categoryNames = Array.from(checkedBoxes).map(cb => {
-            const label = cb.parentElement;
-            return label.textContent.trim();
-        }).join(', ');
-        const selectedMethodOption = methodSelect.options[methodSelect.selectedIndex];
-        const methodName = selectedMethodOption.textContent;
-        alert(`Transaction "${nameInput.value}" ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(amountInput.value))} on ${dateInput.value} in ${categoryNames} via ${methodName}`);
-        modalNewTransaction.remove();
+        if (validateForm()) onSubmit(fields);
     });
+}
 
-    // clear errors on input
-    [nameInput, dateInput, amountInput, accountSelect].forEach(input => {
-        input.addEventListener('input', function() {
+// Helper: Set up event listeners for clearing errors and closing
+function setupEventListeners(modal, fields, closeSpan, cancelBtn) {
+    // Clear errors on input
+    [fields.name.input, fields.date.input, fields.amount.input, fields.account.input].forEach(input => {
+        input.addEventListener('input', () => {
             if (input.classList.contains('invalid')) {
                 input.classList.remove('invalid');
-                const row = input.closest('.form-row');
-                if (row) row.querySelector('.field-error').textContent = '';
+                input.closest('.form-row').querySelector('.field-error').textContent = '';
             }
         });
     });
-    methodSelect.addEventListener('change', function() {
-        if (methodSelect.classList.contains('invalid')) {
-            methodSelect.classList.remove('invalid');
-            const row = methodSelect.closest('.form-row');
-            if (row) row.querySelector('.field-error').textContent = '';
+    fields.method.input.addEventListener('change', () => {
+        if (fields.method.input.classList.contains('invalid')) {
+            fields.method.input.classList.remove('invalid');
+            fields.method.input.closest('.form-row').querySelector('.field-error').textContent = '';
         }
     });
 
-    // close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target === modalNewTransaction) {
-            modalNewTransaction.remove();
-        }
-    };
+    // Close modal
+    closeSpan.addEventListener('click', () => modal.remove());
+    cancelBtn.addEventListener('click', () => modal.remove());
+    window.addEventListener('click', event => {
+        if (event.target === modal) modal.remove();
+    });
+}
 
-    // Add modal to the page and display it
-    document.body.appendChild(modalNewTransaction);
-    modalNewTransaction.style.display = "block";
+function CreateModalNewTransaction(transactionType) {
+    // Main orchestration
+    const { modal, content } = createModalSkeleton();
+    const closeSpan = createModalHeader(content);
+    const form = createForm(content);
+    const fields = createFormFields(form, transactionType);
+    const { cancelBtn } = createModalActions(form);
+    setupValidation(form, fields, (fields) => {
+        const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
+        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
+        const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
+        alert(`Transaction "${fields.name.input.value}" ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(fields.amount.input.value))} on ${fields.date.input.value} in ${categoryNames} via ${methodName}`);
+        modal.remove();
+    });
+    setupEventListeners(modal, fields, closeSpan, cancelBtn);
+
+    // Display modal
+    document.body.appendChild(modal);
+    modal.style.display = "block";
+}
+
+function CreateModalEditTransaction(transactionId) {
+    // Fetch existing transaction data
+    fetchTransactionData()
+        .then(transactions => {
+            const transaction = transactions.find(t => t.id == transactionId);
+            if (!transaction) {
+                alert('Transaction not found');
+                return;
+            }
+
+            // Main orchestration
+            const { modal, content } = createModalSkeleton();
+            const closeSpan = createModalHeader(content, 'Edit Transaction');
+            const form = createForm(content);
+            const fields = createFormFields(form, transaction.type);
+            const { cancelBtn } = createModalActions(form, 'Update Transaction', 'Cancel');
+
+
+            // Pre-populate fields
+            fields.name.input.value = transaction.name;
+            fields.date.input.value = transaction.date;
+            fields.amount.input.value = transaction.amount;
+            // Account: set selected option
+            fields.account.input.value = transaction.accountId;
+
+            // Categories: wait for checkboxes to be loaded before checking them
+            function setCategoryCheckboxes() {
+                const categoryCheckboxes = fields.category.input.querySelectorAll('input[type="checkbox"]');
+                if (categoryCheckboxes.length === 0) {
+                    setTimeout(setCategoryCheckboxes, 50);
+                    return;
+                }
+                categoryCheckboxes.forEach(cb => {
+                    // Compare label text (category name) to transaction.category array
+                    const labelText = cb.nextSibling && cb.nextSibling.textContent ? cb.nextSibling.textContent.trim() : '';
+                    if (Array.isArray(transaction.category) && transaction.category.includes(labelText)) {
+                        cb.checked = true;
+                    }
+                });
+                // Update category button text
+                const checked = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
+                fields.category.input.querySelector('button').textContent = checked.length ? Array.from(checked).map(cb => cb.nextSibling.textContent.trim()).join(', ') : 'Select categories';
+            }
+            setCategoryCheckboxes();
+
+            // Method: set selected
+            fields.method.input.value = transaction.methodId;
+
+            setupValidation(form, fields, (fields) => {
+                const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
+                const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
+                const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
+                // Here, you would typically send an update request to the server or update local data
+                alert(`Transaction "${fields.name.input.value}" updated: ${transaction.type.toUpperCase()} ${formatter.format(parseFloat(fields.amount.input.value))} on ${fields.date.input.value} in ${categoryNames} via ${methodName}`);
+                modal.remove();
+                // Optionally, refresh the transaction list or update the row
+            });
+            setupEventListeners(modal, fields, closeSpan, cancelBtn);
+
+            // Display modal
+            document.body.appendChild(modal);
+            modal.style.display = "block";
+        })
+        .catch(err => console.error('Failed to load transaction data:', err));
 }

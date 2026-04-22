@@ -8,3 +8,6 @@ Solved index redirect issue.
 There was an extrenuous page/dashboard.html, for some reason, outside the root folder. Removing that resulted in the redirect giving a proper error message about not being able to reach pages.html (I didn't copy it, sorry boutcha).
 Adding the dot before the pages link solved that error.
 
+4/22/2026 12:23PM
+Began creating XAMPP database and connecting to it. Following these instructions: https://github.com/Omar-Sa6ry/XMPP-nodejs/blob/main/README.md
+No issues yet, but I can't help but anticipate. Plus, I will probably need the reference for the README setup instructions.

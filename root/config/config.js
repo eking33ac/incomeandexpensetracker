@@ -1,0 +1,1 @@
+/* Sets Sets BASE_PATH and BASE_URL */

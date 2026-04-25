@@ -1,3 +1,5 @@
+/* Entry point for Node.js server. Sets up server, initializes middleware, and mounts routes. (not yet implemented) */
+
 // Connect to MySQL database using mysql2 package
 
 const mysql = require('mysql2');

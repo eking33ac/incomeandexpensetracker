@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- I think these page files will be .ejs -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/accounts.css">
+    <link rel="stylesheet" href="/css/transactions.css">
+    <link rel="stylesheet" href="/css/modals.css">
+    <script defer src="/scripts/helper.js"></script>
+    <script defer src="/scripts/layout.js"></script>
+    <script defer src="/scripts/modals.js"></script>
+</head>
+<body>
+    <div id="root-container">
+        <%- include('navigation.ejs') %>
+        <div id="content-container">
+            <header><h1><%= pageTitle %></h1></header>
+            <main>

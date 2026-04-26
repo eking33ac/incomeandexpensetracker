@@ -1,7 +1,7 @@
 /* accounts page controller functions */
 // require presenter to render page with data #TODO are presenters even needed? Maybe just render the page with data in the controller? #TODO
 // require account model to fetch accounts from file (to be database) and render to page. #TODO eventually move data fetching to a service or manager layer so controllers don't know about data fetching, but for now, put it here for testing purposes. #TODO
-const AccountsManager = require('../models/domain-entities/account');
+const AccountsManager = require('../models/domain-entities/account-model');
 
 
 // create the page?
@@ -13,8 +13,7 @@ exports.getAccountsPage = (req, res, next) => {
             path: '/accounts',
             accounts: allAccounts
         });
-    });
-    
+    });    
 }
 
 exports.postAccountsPage = (req, res, next) => {

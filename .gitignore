@@ -1,6 +1,4 @@
 documentation/temp.txt
-root/models/orm-services/account-manager.js
-root/models/orm-services/transaction-manager.js
 root/models/database/database.js
 root/models/database/account-db.js
 root/models/database/transaction-db.js

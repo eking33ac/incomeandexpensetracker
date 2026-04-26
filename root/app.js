@@ -20,7 +20,7 @@ const app = express();
 /* Set up view engine */
 app.set('view engine', 'ejs');
 /* Set views directory */
-app.set('views', 'views'); // views is also the default, but if it changes in the project, change here
+app.set('views', path.join(__dirname, 'views')); // views is also the default, but if it changes in the project, change here
 
 /* parse incoming request bodies */
 app.use(bodyParser.urlencoded({ extended: false }));

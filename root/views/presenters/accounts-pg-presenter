@@ -1,0 +1,10 @@
+
+// // Get the accounts. This will eventually be done in the controller so presenters don't know about data fetching, but for now, put it here for testing purposes. #TODO
+// const AccountController = require('../../models/domain-entities/account');
+// const Account = require('../../models/domain-entities/account');
+
+// exports.presentAccountsPage = (req, res, next) => {
+//     AccountController.fetchAll(accounts => {
+//         res.render('accounts', { accounts });
+//     });
+// };

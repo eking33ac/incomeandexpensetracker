@@ -16,12 +16,35 @@
 </head>
 <body>
     <div id="root-container">
-        <nav id="nav-container"></nav>
+        <nav id="nav-container">
+            <button id="hamburger-btn">&#9776;</button>
+            <a href="dashboard">Dashboard</a>
+            <a href="transactions">Transactions</a>
+            <a href="accounts">Accounts</a>
+        </nav>
         <div id="content-container">
-            <header></header>
-            <main></main>
+            <header><%= pageTitle %></header>
+            <main>
+                <div class="accounts-flexbox">
+                    <% if (accounts.length === 0) { %>
+                        <p>No accounts found.</p>
+                    <% } else { %>
+                        <% accounts.forEach(account => { %>
+                            <div class="account-panel" > <!-- (removed temporarily because of errors) style="background-color: <%= account.color %>;" --> <!-- Inline style. Ew. #TODO-->
+                                <h2 class="account-name item"><%= account.name %></h2>
+                                <p class="account-balance item">Balance: <%= account.balance %></p> <!-- Use formatter from helper function that is currently still in scripts. Move it to appropriate location and call in the router/controller for access in this file. -->
+                                <button class="delete-btn item">Delete Account</button>
+                                <button class="view-details-btn item">View Details ></button>
+                            </div> <!-- Keep account id hidden somewhere here to add a generic event listener for delete and view onclick buttons #TODO -->
+                        <% }); %>
+                    <% } %>
+                </div>
+            </main>
         </div>
     </div>
-    <footer></footer>
+    <footer>
+        <p>&copy; 2026 Income and Expense Tracker. All rights reserved.</p>
+        <a href="https://github.com/eking33ac/incomeandexpensetracker">GitHub Repository</a>
+    </footer>
 </body>
 </html>

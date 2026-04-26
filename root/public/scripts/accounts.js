@@ -1,4 +1,6 @@
 // accounts.js - Minimal accounts page logic
+// Should be done with this. Might still need the initAccountsPage as reference but not needed itself. #TODO
+
 "use strict";
 
 const main = document.querySelector("main");

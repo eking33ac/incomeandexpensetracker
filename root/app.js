@@ -29,17 +29,37 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, 'public')));
 
 
-/* Call routes */
+/* Call page routes */
 app.use('/transactions',transactionRoutes);
 app.use('/accounts',accountRoutes);
 app.use('/dashboard',dashboardRoutes);
 app.use('/account-detail', accountDetailRoutes);
 
+
+/* api end point testing - transactions */
+const transactionManager = require('./models/orm-services/transaction-manager');
+
+app.get('/api/transactions', (req, res, next) => {
+  const TransactionManager = new transactionManager('./data/transactions.json');
+  TransactionManager.fetchAll(allTransactions => { // trans manager should not interact here. Should be controller.
+    res.render(200).send('API endpoint for transactions: ' + JSON.stringify(allTransactions));
+  });
+});
+
+// /api/transactions/1 (1 is the hypoethical transaction id)
+app.get('/api/transactions/:id', (req, res, next) => {
+  req.params.id; // access the id parameter from the URL
+  res.send('API endpoint for transaction with id: ' + req.params.id);
+});
+
 app.use(errorController.get404Page);
 
 
-/* Start server on port 5000 */
-app.listen(5000);
+// PORT
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+});
 
 
 

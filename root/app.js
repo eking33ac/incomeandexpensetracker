@@ -40,9 +40,9 @@ app.use('/account-detail', accountDetailRoutes);
 const transactionManager = require('./models/orm-services/transaction-manager');
 
 app.get('/api/transactions', (req, res, next) => {
-  const TransactionManager = new transactionManager('./data/transactions.json');
+  const TransactionManager = new transactionManager('./data/transaction-data.json');
   TransactionManager.fetchAll(allTransactions => { // trans manager should not interact here. Should be controller.
-    res.render(200).send('API endpoint for transactions: ' + JSON.stringify(allTransactions));
+    res.status(200).send('API endpoint for transactions: ' + allTransactions); // opyionally(?) parse and stringify json
   });
 });
 

@@ -8,12 +8,14 @@ const express = require('express');
 // const rootDir = require('../util/path');
 const transactionsController = require('../controllers/transactions');
 
+
 /* Create router */
 const router = express.Router();
 
 /* Define routes */
 router.get('/', transactionsController.getTransactionsPage);
-// router.post('/transactions', transactionController.postAddTransactionPage);
+// router.post('/transactions', transactionsController.postAddTransactionPage);
+
 
 /* Export router */
 module.exports = router;

@@ -13,6 +13,7 @@ const transactionRoutes = require('./routes/transaction');
 const accountRoutes = require('./routes/accounts');
 const dashboardRoutes = require('./routes/dashboard');
 const accountDetailRoutes = require('./routes/account-detail');
+const apiRoutes = require('./routes/api-router');
 
 /* create app */
 const app = express();
@@ -34,23 +35,7 @@ app.use('/transactions',transactionRoutes);
 app.use('/accounts',accountRoutes);
 app.use('/dashboard',dashboardRoutes);
 app.use('/account-detail', accountDetailRoutes);
-
-
-/* api end point testing - transactions */
-const transactionManager = require('./models/orm-services/transaction-manager');
-
-app.get('/api/transactions', (req, res, next) => {
-  const TransactionManager = new transactionManager('./data/transaction-data.json');
-  TransactionManager.fetchAll(allTransactions => { // trans manager should not interact here. Should be controller.
-    res.status(200).send('API endpoint for transactions: ' + allTransactions); // opyionally(?) parse and stringify json
-  });
-});
-
-// /api/transactions/1 (1 is the hypoethical transaction id)
-app.get('/api/transactions/:id', (req, res, next) => {
-  req.params.id; // access the id parameter from the URL
-  res.send('API endpoint for transaction with id: ' + req.params.id);
-});
+app.use('/api', apiRoutes); // Mount API routes under /api
 
 app.use(errorController.get404Page);
 

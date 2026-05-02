@@ -13,13 +13,13 @@ exports.getTransactionsPage = (req, res, next) => {
             path: '/transactions'
         });
     });
-}
+};
 
 exports.postTransactionsPage = (req, res, next) => {
     // Save a new transaction?
     // console.log("ran postTransactionPage() function");
     // res.redirect('/transactions');
-}
+};
 
 exports.getTransactions = (req, res, next) => {
   req.params.id; // access the id parameter from the URL

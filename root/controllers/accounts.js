@@ -4,7 +4,7 @@
 const AccountsManager = require('../models/domain-entities/account-model');
 
 
-// create the page?
+// create the page
 exports.getAccountsPage = (req, res, next) => {
     // fetch accounts
     AccountsManager.fetchAll(allAccounts => {

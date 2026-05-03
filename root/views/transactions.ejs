@@ -1,2 +1,53 @@
 <%- include('includes/head.ejs') %>
+<div class="add-btns-container">
+    <button class="add-income-btn">Add Income</button>
+    <button class="add-expense-btn">Add Expense</button>
+</div>
+<div class="filters-container"></div>
+<div> <!-- transactionsDiv from old public script transactions.js -->
+    <% if (!accounts) { %>
+        <p class="no-accounts-warning">No accounts found. Please add an account before adding transactions.</p>
+    <% } else { %>
+        <table class="transactions-table">
+            <tr> <!-- Create Headers --> <!-- TODO: ID is not currently saved with the row. Might not be relevant as the table creations may be done by a script in the future. -->
+                <% if (transactions.length > 0) { %>
+                    <% Object.keys(transactions[0]).forEach(key => { %>
+                        <% // skip transaction id and account id %>
+                        <% if (key === 'id' || key === 'accountId') return; %>
+                            <th><%= key.charAt(0).toUpperCase() + key.slice(1); %></th>
+                    <% }) %>
+                <% } else { %>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Method</th>
+                <% } %>
+                <th>Account Name</th> <!-- #TODO: This will eventually be re-ordered -->
+                <th>Update</th>
+            </tr>
+
+            <% if (transactions.length === 0) { %>
+                <tr>
+                    <td colspan="8">No transactions found. Add your first transaction to get started!</td>
+                </tr>
+            <% } else { // Set table rows with transactions data %>
+                <% transactions.forEach(transaction => { %>
+                    <tr> <!-- Create a row for each transaction -->
+                        <% Object.entries(transaction).forEach(([key, value]) => { %>
+                            <% // skip transaction id and account id %>
+                            <% if (key === 'id' || key === 'accountId') return; %>
+                                <td><%= value %></td>
+                        <% }) %>
+                        <% // find the account name for this transaction's account id %>
+                        <% const account = accounts.find(account => account.id === transaction.accountId); %>
+                        <td><%= account ? account.name : 'Unknown Account' %></td>
+                        <td><button class="edit-btn"</td>Edit</button>&nbsp;<button class="delete-btn"</td>Delete</button></td>
+                    </tr>
+                <% }) %>
+            <% } %>
+        </table>
+    <% } %>
+</div>
 <%- include ('includes/foot.ejs')%>

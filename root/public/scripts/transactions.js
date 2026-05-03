@@ -7,7 +7,7 @@ function initTransactionsPage() {
     /* Fetch account and transaction data using data.js */
     fetchAccountData()
         .then(accountData => {
-            fetchTransactionData()
+            getTransactionData()
                 .then(transactionData => {
                     setTransactionPage();
                     renderTransactionData(accountData, transactionData);

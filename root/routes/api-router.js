@@ -4,13 +4,15 @@ const express = require('express');
 
 /* project's imports */
 // const rootDir = require('../util/path');
-const transactionsAPIController = require('../controllers/transactions-api');
-
+const transactionsAPIController = require('../controllers/api/transactions-api');
+const accountsAPIController = require('../controllers/api/accounts-api');
+const categoriesAPIController = require('../controllers/api/categories-api');
+const methodsAPIController = require('../controllers/api/methods-api');
 
 /* Create router */
 const router = express.Router();
 
-/* Define transaction routes */
+/* Define transactions routes */
 
 // Get all transactions
 router.get('/transactions', transactionsAPIController.getTransactions);
@@ -23,5 +25,18 @@ router.patch('/transactions/:id', transactionsAPIController.updateTransaction);
 // Delete a transaction by id #TODO: TEST then add validation
 router.delete('/transactions/:id', transactionsAPIController.deleteTransaction);
 
+/* Define accounts routes */
+// Get all accounts
+router.get('/accounts', accountsAPIController.getAccounts);
 
+/* Define categories routes */
+// Get all categories
+router.get('/categories', categoriesAPIController.getCategories);
+
+/* Define methods routes */
+// Get all methods
+router.get('/methods', methodsAPIController.getMethods);
+
+
+/* Export router */
 module.exports = router;

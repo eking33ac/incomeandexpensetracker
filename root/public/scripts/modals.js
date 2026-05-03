@@ -53,8 +53,8 @@ function createField(labelText, input) {
 }
 
 // Helper: Populate a select element from JSON data
-function populateSelect(select, dataUrl, valueProp, textProp) {
-    fetchDataUrl(dataUrl)
+function populateSelect(select, fetchDataCallback, valueProp, textProp, errorMessage = 'Failed to load options') {
+    fetchDataCallback()
         .then(data => {
             data.forEach(item => {
                 const option = document.createElement('option');
@@ -63,7 +63,7 @@ function populateSelect(select, dataUrl, valueProp, textProp) {
                 select.appendChild(option);
             });
         })
-        .catch(err => console.error(`Failed to load ${dataUrl}:`, err));
+        .catch(err => console.error(`Failed to load ${errorMessage}:`, err));
 }
 
 // Helper: Create the custom category field
@@ -142,7 +142,7 @@ function createFormFields(form, transactionType) {
     defaultAccountOpt.disabled = true;
     defaultAccountOpt.selected = true;
     accountSelect.appendChild(defaultAccountOpt);
-    populateSelect(accountSelect, '../assets/data/account-data.json', 'id', 'name');
+    populateSelect(accountSelect, getAccountsData, 'id', 'name', 'Failed to load accounts');
     fields.account = createField('Account', accountSelect);
 
     // Category field (custom)
@@ -169,7 +169,7 @@ function createFormFields(form, transactionType) {
     defaultMethodOpt.disabled = true;
     defaultMethodOpt.selected = true;
     methodSelect.appendChild(defaultMethodOpt);
-    populateSelect(methodSelect, '../assets/data/methods.json', 'id', 'name');
+    populateSelect(methodSelect, fetchMethodsData, 'id', 'name', 'Failed to load methods');
     fields.method = createField('Method', methodSelect);
 
     // Append all fields
@@ -303,7 +303,7 @@ function CreateModalNewTransaction(transactionType) {
 
 function CreateModalEditTransaction(transactionId) {
     // Fetch existing transaction data
-    fetchTransactionData()
+    getTransactionData()
         .then(transactions => {
             const transaction = transactions.find(t => t.id == transactionId);
             if (!transaction) {
@@ -353,10 +353,28 @@ function CreateModalEditTransaction(transactionId) {
                 const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
                 const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
-                // Here, you would typically send an update request to the server or update local data
-                alert(`Transaction "${fields.name.input.value}" updated: ${transaction.type.toUpperCase()} ${formatter.format(parseFloat(fields.amount.input.value))} on ${fields.date.input.value} in ${categoryNames} via ${methodName}`);
-                modal.remove();
-                // Optionally, refresh the transaction list or update the row
+                // Post to the server with the new transaction data
+                const newTransaction = {
+                    id: transaction.id,
+                    name: fields.name.input.value,
+                    type: transaction.type,
+                    date: fields.date.input.value,
+                    amount: parseFloat(fields.amount.input.value),
+                    accountId: fields.account.input.value,
+                    category: categoryNames, // This should ideally be an array of category IDs, but for simplicity we're just sending names here
+                    methodId: fields.method.input.value
+                };
+                postTransactionData(newTransaction)
+                    .then(response => {
+                        alert(`Transaction "${response.name}" created successfully!`);
+                        modal.remove();
+                        // Optionally, refresh the transaction list or create the row
+                    })
+                    .catch(err => {
+                        console.error('Failed to create transaction:', err);
+                        alert('Failed to create transaction. Please try again.');
+                    });
+                // Optionally, refresh the transaction list or create the row
             });
             setupEventListeners(modal, fields, closeSpan, cancelBtn);
 

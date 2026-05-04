@@ -9,7 +9,7 @@ const nav = document.querySelector('nav');
 
 
 window.addEventListener('DOMContentLoaded', () => {
-    // initPage();
+    initPage();
     buildLayout();
 });
 

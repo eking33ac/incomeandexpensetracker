@@ -286,13 +286,39 @@ function CreateModalNewTransaction(transactionType) {
     const closeSpan = createModalHeader(content);
     const form = createForm(content);
     const fields = createFormFields(form, transactionType);
-    const { cancelBtn } = createModalActions(form);
+    const { cancelBtn } = createModalActions(form);    
+
+
+
     setupValidation(form, fields, (fields) => {
         const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
+        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()); // now an array
         const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
-        alert(`Transaction "${fields.name.input.value}" ready: ${transactionType.toUpperCase()} ${formatter.format(parseFloat(fields.amount.input.value))} on ${fields.date.input.value} in ${categoryNames} via ${methodName}`);
-        modal.remove();
+
+        // Create Transaction object with correct fields
+        const newTransaction = {
+            name: fields.name.input.value,
+            type: transactionType,
+            date: fields.date.input.value,
+            amount: parseFloat(fields.amount.input.value),
+            accountId: parseInt(fields.account.input.value),
+            category: categoryNames, // now an array
+            method: methodName // use the name, not the id
+        };
+        console.log("Posting transaction:", newTransaction);
+        // Post to the server with the new transaction data
+        postTransactionData(newTransaction)
+            .then(response => {
+                console.log("Server response:", response);
+                alert(`Transaction "${response.name}" created successfully!`);
+                modal.remove();
+                // Optionally, refresh the transaction list or create the row
+            })
+            .catch(err => {
+                console.error('Failed to create transaction:', err);
+                alert('Failed to create transaction. Please try again.');
+            });
+        // Optionally, refresh the transaction list or create the row
     });
     setupEventListeners(modal, fields, closeSpan, cancelBtn);
 

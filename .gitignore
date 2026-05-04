@@ -1,5 +1,6 @@
-documentation/temp.txt
 root/models/database/database.js
 root/models/database/account-db.js
 root/models/database/transaction-db.js
-API_DOCS.md
+documentation/selfreflectionph2.txt
+documentation/selfreflectionph3
+documentation/selfreflectionph3.txt

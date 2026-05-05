@@ -26,6 +26,7 @@ This view contains a title and cards for each existing account. Each card displa
 
 - Mobile View:
     - The navigation is visible when you first load in or switch pages, and the hamburger button needs to be pressed to actually view the page you navigated to.
+    - In addition to prior bullet, the main body container is still visible, meaning you can scroll horizontally and see the page even while hamburger button/navigation is active. (Class and id names may not perfectly match terms used in this bullet point)
     - On the transactions page, the table expands beyond the screen size
 - Transactions Table:
     - Move Account Name to the beginning of the row and change to read "Account"

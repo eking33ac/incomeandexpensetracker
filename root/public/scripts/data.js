@@ -6,7 +6,7 @@ function getAccountsData() {
 }
 
 // Fetch transaction data
-function getTransactionData() {
+function getTransactionsData() {
     return fetch('/api/transactions').then(r => r.json());
 }
 
@@ -22,11 +22,11 @@ function postTransactionData(transaction) {
 }
 
 // Fetch categories data
-function fetchCategoriesData() {
+function getCategoriesData() {
     return fetch('/api/categories').then(r => r.json());
 }
 
 // Fetch methods data
-function fetchMethodsData() {
+function getMethodsData() {
     return fetch('/api/methods').then(r => r.json());
 }

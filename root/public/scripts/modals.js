@@ -91,7 +91,7 @@ function createCategoryField() {
     container.appendChild(dropdown);
 
     // Populate categories
-    fetchCategoriesData()
+    getCategoriesData()
         .then(categories => {
             categories.forEach(cat => {
                 const label = document.createElement('label');
@@ -169,7 +169,7 @@ function createFormFields(form, transactionType) {
     defaultMethodOpt.disabled = true;
     defaultMethodOpt.selected = true;
     methodSelect.appendChild(defaultMethodOpt);
-    populateSelect(methodSelect, fetchMethodsData, 'id', 'name', 'Failed to load methods');
+    populateSelect(methodSelect, getMethodsData, 'id', 'name', 'Failed to load methods');
     fields.method = createField('Method', methodSelect);
 
     // Append all fields
@@ -329,7 +329,7 @@ function CreateModalNewTransaction(transactionType) {
 
 function CreateModalEditTransaction(transactionId) {
     // Fetch existing transaction data
-    getTransactionData()
+    getTransactionsData()
         .then(transactions => {
             const transaction = transactions.find(t => t.id == transactionId);
             if (!transaction) {

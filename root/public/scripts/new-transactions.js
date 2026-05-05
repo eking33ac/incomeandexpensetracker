@@ -13,17 +13,17 @@ function initTransactionsPage() {
 }
 
 
-// TODO: Update Modal until this works, then see how to make this script only run on transactions page. Probably have a script to check what page we are on?
-// TODO: Get POST working on this modal.
-// Then add page update after POST. 
+// TODO:
+// Start with updating the README because any grade is better than no grade. Gotta ensure instructor can RUN THE SERVER, including instaling dependancies and jazz. Should be easy for him to run it with npm start, but check on another device after SAaD.
+// Then add page update after POST. (OPTIONALLY. We can also instruct user to refresh page after adding transaction, but that ain't ideal. <Secondarily, idk if we are being graded on that.>)
 // Then add violation and error handling.
-// Then add PATCH (edit transaction) and DELETE (delete transaction) functionality to the table rows on the page. This will likely require populating the table on the front end rather than in EJS so that we can add the buttons and event listeners to the rows. 
-// Then add page update after PATCH and DELETE. Then add violation and error handling for those as well.
+// Then add PATCH (edit transaction) and DELETE (delete transaction) functionality to the table rows on the page. (patch currently needs to have different fields sent back to the backend. If validation is created on the backend, errors should help us fix the frontend.)
+// Then add page update after PATCH and DELETE. Then add violation and error handling for those as well, if not done previously.
 // Then ensure all api calls are returning correct status codes and messages, and add error handling for any failed API calls on the front end.
-// Then ensure body parsing on all incoming API calls is part of the validation.
+// Then ensure body parsing on all incoming API calls is part of the validation. (I think this is already done on app.js with the express.json() middleware, but need to check that.)
 // from instructions: "Apply middleware for logging and JSON parsing as needed."
 // Then check error message responses meet instruction step 4 example
-// Then complete API_DOCS.md documentation (For ALL api calls, not just transactions)
+// Then complete API_DOCS.md documentation (For ALL api calls, not just transactions). Remove TODO from them. Update POST transaction lookups to string or id and int, whichever gets used.
 // Then do the self-reflection
 // then update the README.md
 // Then check the instructions and realize we forgot 25 important things.

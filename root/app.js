@@ -14,6 +14,8 @@ const accountRoutes = require('./routes/accounts');
 const dashboardRoutes = require('./routes/dashboard');
 const accountDetailRoutes = require('./routes/account-detail');
 const apiRoutes = require('./routes/api-router');
+// Middleware imports
+const logger = require('./middleware/logger');
 
 /* create app */
 const app = express();
@@ -25,8 +27,11 @@ app.set('views', path.join(__dirname, 'views')); // views is also the default, b
 
 
 /* parse incoming request bodies */
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false })); // I don't remember what this is for. Is it needed? #TODO
 app.use(express.json()); // Enable JSON body parsing for API POST/PATCH
+
+/* Middleware for logging requests - for development purposes */
+app.use(logger);
 
 /* Serve static files */
 app.use(express.static(path.join(rootDir, 'public')));

@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "name": "Tutor Salaryy",
-    "accountId": "2",
-    "amount": 602,
+    "name": "Tutor Salaryyy",
+    "accountId": "1",
+    "amount": 606,
     "date": "2026-05-18",
     "type": "Income",
     "category": "Salary",
     "method": "Bank Transfer",
-    "methodId": "2"
+    "methodId": "1"
   },
   {
     "id": 2,

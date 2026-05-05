@@ -16,6 +16,7 @@ const accountDetailRoutes = require('./routes/account-detail');
 const apiRoutes = require('./routes/api-router');
 // Middleware imports
 const logger = require('./middleware/logger');
+const jsonValidation = require('./middleware/validation/json-validation'); // Middleware for validating JSON request bodies for API routes. To be implemented when API routes are ready.
 
 /* create app */
 const app = express();
@@ -27,8 +28,7 @@ app.set('views', path.join(__dirname, 'views')); // views is also the default, b
 
 
 /* parse incoming request bodies */
-app.use(bodyParser.urlencoded({ extended: false })); // I don't remember what this is for. Is it needed? #TODO
-app.use(express.json()); // Enable JSON body parsing for API POST/PATCH
+app.use(jsonValidation);
 
 /* Middleware for logging requests - for development purposes */
 app.use(logger);
@@ -48,7 +48,7 @@ app.use(errorController.get404Page);
 
 
 // PORT
-const PORT = process.env.PORT || 5000;
+const PORT = 5000; //process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });

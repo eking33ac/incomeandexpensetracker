@@ -353,7 +353,7 @@ function CreateModalEditTransaction(transactionId) {
             fields.account.input.value = transaction.accountId;
 
             // Categories: wait for checkboxes to be loaded before checking them
-            function setCategoryCheckboxes() {
+            function setCategoryCheckboxes() { // #TODO: These are not set. Just ask AI to find out why and fix it pretty easily.
                 const categoryCheckboxes = fields.category.input.querySelectorAll('input[type="checkbox"]');
                 if (categoryCheckboxes.length === 0) {
                     setTimeout(setCategoryCheckboxes, 50);
@@ -373,14 +373,14 @@ function CreateModalEditTransaction(transactionId) {
             setCategoryCheckboxes();
 
             // Method: set selected
-            fields.method.input.value = transaction.methodId;
+            fields.method.input.value = transaction.methodId; // Does this exist here?
 
             setupValidation(form, fields, (fields) => {
                 const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
                 const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
                 // Post to the server with the new transaction data
-                const newTransaction = {
+                const updatedTransaction = {
                     id: transaction.id,
                     name: fields.name.input.value,
                     type: transaction.type,
@@ -390,15 +390,15 @@ function CreateModalEditTransaction(transactionId) {
                     category: categoryNames, // This should ideally be an array of category IDs, but for simplicity we're just sending names here
                     methodId: fields.method.input.value
                 };
-                postTransactionData(newTransaction)
+                patchTransactionData(transaction.id, updatedTransaction)
                     .then(response => {
-                        alert(`Transaction "${response.name}" created successfully!`);
+                        alert(`Transaction "${response.name}" updated successfully!`);
                         modal.remove();
                         // Optionally, refresh the transaction list or create the row
                     })
                     .catch(err => {
-                        console.error('Failed to create transaction:', err);
-                        alert('Failed to create transaction. Please try again.');
+                        console.error('Failed to update transaction:', err);
+                        alert('Failed to update transaction. Please try again.');
                     });
                 // Optionally, refresh the transaction list or create the row
             });

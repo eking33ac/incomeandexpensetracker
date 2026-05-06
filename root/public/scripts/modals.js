@@ -351,11 +351,12 @@ function CreateModalNewTransaction(transactionType) {
         // Post to the server with the new transaction data
         postTransactionData(newTransaction)
             .then(response => {
-                if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
+                if (handleTransactionErrors(response, fields, modal)) return;
                 console.log("Server response:", response);
+                // Show alert, then reload after user confirms
                 alert(`Transaction "${response.name}" created successfully!`);
                 modal.remove();
-                // Optionally, refresh the transaction list or create the row
+                window.location.reload();
             })
             .catch(err => { // Generic error for now. In the future, could check error type/message and display specific messages for different cases (e.g. network error vs server validation error vs unexpected server error)
                 console.error('Failed to create transaction:', err);
@@ -441,7 +442,7 @@ function CreateModalEditTransaction(transactionId) {
                         if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
                         alert(`Transaction "${response.name}" updated successfully!`);
                         modal.remove();
-                        // Optionally, refresh the transaction list or create the row
+                        window.location.reload();
                     })
                     .catch(err => {
                         console.error('Failed to update transaction:', err);
@@ -456,4 +457,62 @@ function CreateModalEditTransaction(transactionId) {
             modal.style.display = "block";
         })
         .catch(err => console.error('Failed to load transaction data:', err));
+}
+
+
+
+
+// Delete Transaction Modal
+function CreateModalDeleteTransaction(transactionId, transactionName = "this transaction") {
+    // Create modal skeleton
+    const { modal, content } = createModalSkeleton();
+    const closeSpan = createModalHeader(content, 'Delete Transaction');
+    // Modal body
+    const body = document.createElement('div');
+    body.classList.add('modal-body');
+    body.innerHTML = `<p>Are you sure you want to delete <strong>"${transactionName}"</strong>? This action cannot be undone.</p>`;
+    content.appendChild(body);
+
+    // Modal actions
+    const actions = document.createElement('div');
+    actions.classList.add('modal-actions');
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('delete-confirm-btn');
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = 'Cancel';
+    actions.appendChild(deleteBtn);
+    actions.appendChild(cancelBtn);
+    content.appendChild(actions);
+
+    // Event listeners
+    closeSpan.addEventListener('click', () => modal.remove());
+    cancelBtn.addEventListener('click', () => modal.remove());
+    window.addEventListener('click', event => {
+        if (event.target === modal) modal.remove();
+    });
+
+    deleteBtn.addEventListener('click', () => {
+        // Call delete API
+        deleteTransactionById(transactionId)
+            .then(response => {
+                if (response && response.error) {
+                    alert(response.error || 'Failed to delete transaction.');
+                    return;
+                }
+                alert('Transaction deleted successfully.');
+                modal.remove();
+                window.location.reload();
+            })
+            .catch(err => {
+                console.error('Failed to delete transaction:', err);
+                alert('Failed to delete transaction. Please try again.');
+            });
+    });
+
+    // Show modal
+    document.body.appendChild(modal);
+    modal.style.display = "block";
 }

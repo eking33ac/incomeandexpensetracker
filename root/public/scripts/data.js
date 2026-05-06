@@ -36,6 +36,13 @@ function patchTransactionData(transactionId, updatedData) {
     }).then(r => r.json());
 }
 
+// Delete transaction by ID
+function deleteTransactionById(transactionId) {
+    return fetch(`/api/transactions/${transactionId}`, {
+        method: 'DELETE'
+    }).then(r => r.json());
+}
+
 // Fetch categories data
 function getCategoriesData() {
     return fetch('/api/categories').then(r => r.json());

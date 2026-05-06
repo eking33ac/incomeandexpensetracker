@@ -53,7 +53,7 @@ Error response — 404 Bad Request:
 Deletes one transaction based on transaction id.
 Request body (JSON): None
 Success response — 200 OK:
-    {"id":2,"name":"Grocery Shopping","accountId":3,"amount":50,"date":"2026-05-16","type":"Expense","category":["Food","Groceries"],"method":"Cash"}
+    {"message":"Transaction with id 13 deleted successfully."}
 Error response — 400 Bad Request:
     { "error": "Validation failed", "fields": { "id": "ID must be a positive number"} }
 

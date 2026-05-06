@@ -23,7 +23,7 @@ router.get('/transactions', transactionsAPIController.getTransactions);
 // Get transaction by id – No body, usually just validating the ID in the param
 router.get('/transactions/:id', TransactionValidator.checkIdExists, transactionsAPIController.getTransactionById); // Matches a URL like: /api/transactions/1 (1 is the hypoethical transaction id)
 // Post a new transaction – Validates the req body
-router.post('/transactions', AccountValidator.checkIdExists, TransactionValidator.create, transactionsAPIController.postTransaction);
+router.post('/transactions', TransactionValidator.create, transactionsAPIController.postTransaction);
 // Patch (update) a transaction by id – Validates ID and body
 router.patch('/transactions/:id', AccountValidator.checkIdExists, TransactionValidator.update, transactionsAPIController.updateTransaction);
 // Delete a transaction by id – Validates ID

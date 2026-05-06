@@ -199,8 +199,9 @@ function renderTransactionsData(accountsData, transactionsData, categoriesData, 
                 deleteBtn.classList.add('delete-btn');
                 // Attach transaction ID as a data attribute for later use
                 deleteBtn.dataset.transactionId = transaction.id; // Should add validation to ensure there is an id. #TODO
-                deleteBtn.addEventListener('click', function() { // create an editTransaction function and a deleteTransaction function which create modals and run all deletion data. For now, all that is just in modals, but ain't that gross? #TODO eventually
-                    // CreateModalDeleteTransaction(transaction.id); // Assuming there is a function to handle deletion
+                deleteBtn.addEventListener('click', function() {
+                    // Use transaction.name for a better confirmation message
+                    CreateModalDeleteTransaction(transaction.id, transaction.name || 'this transaction');
                 });
 
 

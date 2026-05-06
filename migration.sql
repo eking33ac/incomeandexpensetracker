@@ -1,0 +1,1 @@
+/*  creates all tables from scratch with IF NOT EXISTS guards */

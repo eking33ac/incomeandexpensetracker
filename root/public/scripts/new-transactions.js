@@ -36,15 +36,16 @@ function setTransactionsPage() {
         if (transactionId) {
             getTransactionById(transactionId)
                 .then(transaction => {
-                    if (transaction) {
-                        alert(`Transaction ID: ${transaction.id}\nName: ${transaction.name}\nAmount: ${transaction.amount}\nDate: ${transaction.date}\nType: ${transaction.type}`);
-                    } else {
+                    // If backend returns error or transaction is null/undefined, show not found
+                    if (!transaction || transaction.error) {
                         alert('Transaction not found');
+                        return;
                     }
+                    alert(`Transaction ID: ${transaction.id}\nName: ${transaction.name}\nAmount: ${transaction.amount}\nDate: ${transaction.date}\nType: ${transaction.type}`);
                 })
                 .catch(err => {
                     console.error('Failed to fetch transaction:', err);
-                    alert('Failed to fetch transaction. Please try again.');
+                    alert('Transaction not found');
                 });
         }
     });

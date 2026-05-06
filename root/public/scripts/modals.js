@@ -343,7 +343,7 @@ function CreateModalNewTransaction(transactionType) {
             type: transactionType,
             date: fields.date.input.value,
             amount: parseFloat(fields.amount.input.value),
-            accountId: parseInt(fields.account.input.value),
+            accountId: parseInt(fields.account.input.value, 10),
             category: categoryNames, // always an array of strings
             method: methodName // use the name, not the id
         };
@@ -423,18 +423,20 @@ function CreateModalEditTransaction(transactionId) {
                 // Always send an array of strings (category names)
                 const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).filter(Boolean);
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
-                // Post to the server with the new transaction data
+                // Ensure id is always an integer
+                const intId = Number.isInteger(transaction.id) ? transaction.id : parseInt(transaction.id, 10);
                 const updatedTransaction = {
-                    id: transaction.id, // pretty sure unnecessary
+                    id: intId,
                     name: fields.name.input.value,
                     type: transaction.type,
                     date: fields.date.input.value,
                     amount: parseFloat(fields.amount.input.value),
-                    accountId: fields.account.input.value,
-                    category: categoryNames, // always an array of strings
+                    accountId: parseInt(fields.account.input.value, 10),
+                    category: categoryNames, //  always an array of strings
                     method: methodName // use the name, not the id
                 };
-                patchTransactionData(transaction.id, updatedTransaction)
+                console.log("Updating transaction with data:", updatedTransaction);
+                patchTransactionData(intId, updatedTransaction)
                     .then(response => {
                         if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
                         alert(`Transaction "${response.name}" updated successfully!`);

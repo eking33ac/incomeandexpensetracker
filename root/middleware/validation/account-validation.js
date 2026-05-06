@@ -15,14 +15,14 @@ const validate = (req, res, next) => {
     next();
 };
 
-// Helper to check if account ID exists and is a true integer (not a string)
+// Helper to check if account ID exists (accepts string or number)
 const checkAccountExists = (value) => {
     return new Promise((resolve, reject) => {
-        // Reject if value is not a number type or not an integer
-        if (typeof value !== 'number' || !Number.isInteger(value)) {
-            return reject('Account id must be an integer (not a string)');
+        const intValue = parseInt(value, 10);
+        if (isNaN(intValue) || !Number.isInteger(intValue)) {
+            return reject('Account id must be an integer');
         }
-        accountManager.fetchById(value, account => {
+        accountManager.fetchById(intValue, account => {
             if (!account) {
                 return reject('Account id does not exist');
             }
@@ -36,15 +36,19 @@ module.exports = {
         param('id')
             .exists().withMessage('ID is required')
             .bail()
-            .custom((value) => {
-                // Only accept if value is a number and integer
-                if (typeof value !== 'number' || !Number.isInteger(value)) {
-                    throw new Error('ID must be an integer (not a string)');
-                }
-                return true;
-            })
+            .isInt().withMessage('ID must be an integer')
             .bail()
             .custom(checkAccountExists),
-        validate
+        (req, res, next) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            // Convert id param to integer for downstream use
+            if (req.params && typeof req.params.id === 'string') {
+                req.params.id = parseInt(req.params.id, 10);
+            }
+            next();
+        }
     ]
 };

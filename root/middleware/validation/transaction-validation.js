@@ -60,6 +60,10 @@ module.exports = {
         });
         return res.status(400).json({ error: 'Validation failed', fields });
       }
+      // Convert id param to integer for downstream use
+      if (req.params && typeof req.params.id === 'string') {
+        req.params.id = parseInt(req.params.id, 10);
+      }
       next();
     }
   ],

@@ -34,7 +34,17 @@ class TransactionManager {
         }
       });
       const newId = maxId + 1;
-      const newTransaction = { id: newId, ...newTransactionData };
+      // Always order fields: id, name, amount, type, date, accountId, category, method
+      const {
+        name,
+        amount,
+        date,
+        type,
+        accountId,
+        category,
+        method
+      } = newTransactionData;
+      const newTransaction = { id: newId, name, amount, type, date, accountId, category, method };
       allTransactions.push(newTransaction);
       fs.writeFileSync(this.jsonFilePath, JSON.stringify(allTransactions, null, 2), 'utf-8');
       callback(newTransaction);

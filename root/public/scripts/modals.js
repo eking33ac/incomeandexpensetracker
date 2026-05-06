@@ -340,9 +340,9 @@ function CreateModalNewTransaction(transactionType) {
         // Create Transaction object with correct fields
         const newTransaction = {
             name: fields.name.input.value,
+            amount: parseFloat(fields.amount.input.value),
             type: transactionType,
             date: fields.date.input.value,
-            amount: parseFloat(fields.amount.input.value),
             accountId: parseInt(fields.account.input.value, 10),
             category: categoryNames, // always an array of strings
             method: methodName // use the name, not the id

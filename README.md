@@ -4,7 +4,7 @@ I love you! K bye! <3
 #### Notes
 
 Instructions Created for Windows 10.
-Everything before the Backend section is still only up to date as of 4/16/2026. The Backend section includes new 
+Everything excluding the Backend section and How to Run It is probably still only up to date as of 4/16/2026.
 
 # Income and Expense Tracker
 

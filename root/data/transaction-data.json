@@ -1,26 +1,29 @@
 [
   {
     "id": 1,
-    "name": "Tutor Salaryyy",
+    "name": "Popcorn Seller Salary",
     "accountId": 1,
-    "amount": 606,
-    "date": "2026-05-18",
-    "type": "Income",
-    "category": ["Salary"],
+    "amount": 5000,
+    "date": "2026-05-19",
+    "type": "income",
+    "category": [
+      "Salary",
+      "Food"
+    ],
     "method": "Bank Transfer"
   },
   {
     "id": 2,
     "name": "Grocery Shopping",
-    "accountId": 3,
+    "accountId": "1",
     "amount": 50,
     "date": "2026-05-16",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Food",
       "Groceries"
     ],
-    "method": "Cash"
+    "method": "Bank Transfer"
   },
   {
     "id": 3,
@@ -28,7 +31,7 @@
     "accountId": 1,
     "amount": 100,
     "date": "2026-05-16",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Utilities"
     ],
@@ -40,7 +43,7 @@
     "accountId": 1,
     "amount": 5.97,
     "date": "2026-05-17",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Cafe",
       "College"
@@ -53,7 +56,7 @@
     "accountId": 1,
     "amount": 55,
     "date": "2026-05-17",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Food",
       "Groceries"
@@ -66,7 +69,7 @@
     "accountId": 1,
     "amount": 50,
     "date": "2026-05-18",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Utilities"
     ],
@@ -78,7 +81,7 @@
     "accountId": 3,
     "amount": 20,
     "date": "2026-05-19",
-    "type": "Income",
+    "type": "income",
     "category": [
       "Gifts"
     ],
@@ -90,7 +93,7 @@
     "accountId": 1,
     "amount": 58,
     "date": "2026-05-20",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Gifts"
     ],
@@ -102,7 +105,7 @@
     "accountId": 1,
     "amount": 58,
     "date": "2026-05-20",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Gifts"
     ],
@@ -114,7 +117,7 @@
     "accountId": 1,
     "amount": 58,
     "date": "2026-05-20",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Gifts"
     ],
@@ -126,7 +129,7 @@
     "accountId": 1,
     "amount": 58,
     "date": "2026-05-20",
-    "type": "Expense",
+    "type": "expense",
     "category": [
       "Gifts"
     ],

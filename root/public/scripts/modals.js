@@ -333,7 +333,8 @@ function CreateModalNewTransaction(transactionType) {
 
     setupValidation(form, fields, (fields) => {
         const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()); // now an array
+        // Always send an array of strings (category names)
+        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).filter(Boolean);
         const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
 
         // Create Transaction object with correct fields
@@ -343,7 +344,7 @@ function CreateModalNewTransaction(transactionType) {
             date: fields.date.input.value,
             amount: parseFloat(fields.amount.input.value),
             accountId: parseInt(fields.account.input.value),
-            category: categoryNames, // now an array
+            category: categoryNames, // always an array of strings
             method: methodName // use the name, not the id
         };
         console.log("Posting transaction:", newTransaction);
@@ -419,18 +420,19 @@ function CreateModalEditTransaction(transactionId) {
 
             setupValidation(form, fields, (fields) => {
                 const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-                const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).join(', ');
+                // Always send an array of strings (category names)
+                const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).filter(Boolean);
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
                 // Post to the server with the new transaction data
                 const updatedTransaction = {
-                    id: transaction.id,
+                    id: transaction.id, // pretty sure unnecessary
                     name: fields.name.input.value,
                     type: transaction.type,
                     date: fields.date.input.value,
                     amount: parseFloat(fields.amount.input.value),
                     accountId: fields.account.input.value,
-                    category: categoryNames, // This should ideally be an array of category IDs, but for simplicity we're just sending names here
-                    methodId: fields.method.input.value
+                    category: categoryNames, // always an array of strings
+                    method: methodName // use the name, not the id
                 };
                 patchTransactionData(transaction.id, updatedTransaction)
                     .then(response => {

@@ -15,6 +15,13 @@ class AccountManager {
     const allAccounts = JSON.parse(fs.readFileSync(this.jsonFilePath, 'utf-8'));
     callback(allAccounts);
   }
+
+  fetchById(id, callback) { // TODO: Add validation to ensure id exists and is a number
+    this.fetchAll(allAccounts => {
+      const account = allAccounts.find(a => a.id === parseInt(id));
+      callback(account);
+    });
+  }
 }
 
 module.exports = AccountManager;

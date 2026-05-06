@@ -4,7 +4,7 @@
         <p>No accounts found.</p>
     <% } else { %>
         <% accounts.forEach(account => { %>
-            <div class="account-panel" style="background-color: <%= account.color %>;"> <!-- Inline style. Ew. #TODO-->
+            <div class="account-panel" style="background-color: <%= account.color %>;"> <!-- Inline style. Ew. Also causing non-error errors. ew2 #TODO -->
                 <h2 class="account-name item"><%= account.name %></h2>
                 <p class="account-balance item">Balance: <%= account.balance %></p> <!-- Use formatter from helper function that is currently still in scripts. Move it to appropriate location and call in the router/controller for access in this file. -->
                 <button class="delete-btn item">Delete Account</button>

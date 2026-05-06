@@ -31,7 +31,7 @@ exports.postTransaction = (req, res, next) => {
     });
 };
 
-// Update a transaction by id
+// Patch/update a transaction by id
 exports.updateTransaction = (req, res, next) => {
     const id = req.params.id; // access the id parameter from the URL
     const updatedData = req.body; // access the updated transaction data from the request body

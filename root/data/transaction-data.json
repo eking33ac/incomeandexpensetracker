@@ -2,13 +2,12 @@
   {
     "id": 1,
     "name": "Tutor Salaryyy",
-    "accountId": "1",
+    "accountId": 1,
     "amount": 606,
     "date": "2026-05-18",
     "type": "Income",
-    "category": "Salary",
-    "method": "Bank Transfer",
-    "methodId": "1"
+    "category": ["Salary"],
+    "method": "Bank Transfer"
   },
   {
     "id": 2,
@@ -132,68 +131,5 @@
       "Gifts"
     ],
     "method": "Card"
-  },
-  {
-    "id": 12
-  },
-  {
-    "id": 13
-  },
-  {
-    "id": 14,
-    "name": "Tutor Salary",
-    "type": "income",
-    "date": "4545-04-05",
-    "amount": 25,
-    "accountId": 1,
-    "category": [
-      "Salary"
-    ],
-    "method": "Card"
-  },
-  {
-    "id": 15,
-    "name": "TutTEST4",
-    "type": "expense",
-    "date": "0045-04-05",
-    "amount": 5,
-    "accountId": 1,
-    "category": [
-      "Groceries"
-    ],
-    "method": "Card"
-  },
-  {
-    "id": 16,
-    "name": "Tutor SalaryTEST4",
-    "type": "income",
-    "date": "2026-05-20",
-    "amount": 600,
-    "accountId": 2,
-    "category": [
-      "Salary"
-    ],
-    "method": "Bank Transfer"
-  },
-  {
-    "id": 17
-  },
-  {
-    "id": 18
-  },
-  {
-    "id": 19
-  },
-  {
-    "id": 20,
-    "name": "Tutor Salary5555",
-    "type": "income",
-    "date": "5555-05-05",
-    "amount": 55555,
-    "accountId": 1,
-    "category": [
-      "Salary"
-    ],
-    "method": "Bank Transfer"
   }
 ]

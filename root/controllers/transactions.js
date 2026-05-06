@@ -1,9 +1,11 @@
+/* project imports */
 // require transaction model to fetch accounts from file (to be database) and render to page.
 const TransactionManager = require('../models/orm-services/transaction-manager');
 const transactionManager = new TransactionManager('./data/transaction-data.json');
 // require account model to fetch accounts from file (to be database) and render to page. #TODO eventually move data fetching to a service or manager layer so controllers don't know about data fetching, but for now, put it here for testing purposes. #TODO
 const AccountsManager = require('../models/domain-entities/account-model');
 // const accountManager = new AccountManager('./data/account-data.json');
+
 
 /* transactions page controller functions */
 
@@ -25,11 +27,6 @@ exports.postTransactionsPage = (req, res, next) => {
     // Save a new transaction?
     // console.log("ran postTransactionPage() function");
     // res.redirect('/transactions');
-};
-
-exports.getTransactions = (req, res, next) => {
-  req.params.id; // access the id parameter from the URL
-  res.send('API endpoint for transaction with id: ' + req.params.id);
 };
 
 

@@ -26,10 +26,17 @@ class TransactionManager {
   // Create a new transaction and save it to the json file.
   create(newTransactionData, callback) {
     this.fetchAll(allTransactions => {
-      const newId = allTransactions.length > 0 ? Math.max(...allTransactions.map(t => t.id)) + 1 : 1; // Generate a new id based on the existing transactions TODO: In the future, the database will handle id generation, so this logic will be removed.
-      const newTransaction = { id: newId, ...newTransactionData }; // Create a new transaction object with the generated id and the provided data #TODO: Use actual transaction class?
-      allTransactions.push(newTransaction); // Add the new transaction to the array of all transactions
-      fs.writeFileSync(this.jsonFilePath, JSON.stringify(allTransactions, null, 2), 'utf-8'); // overwrite the json file with the updated transactions array
+      // Find the largest existing id (number), ignoring any undefined/null/NaN ids
+      let maxId = 0;
+      allTransactions.forEach(t => {
+        if (typeof t.id === 'number' && !isNaN(t.id) && t.id > maxId) {
+          maxId = t.id;
+        }
+      });
+      const newId = maxId + 1;
+      const newTransaction = { id: newId, ...newTransactionData };
+      allTransactions.push(newTransaction);
+      fs.writeFileSync(this.jsonFilePath, JSON.stringify(allTransactions, null, 2), 'utf-8');
       callback(newTransaction);
     });
   }

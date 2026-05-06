@@ -98,17 +98,5 @@
       "Gifts"
     ],
     "method": "Card"
-  },
-  {
-    "id": 10,
-    "name": "Gift Shopping2",
-    "accountId": 1,
-    "amount": 58,
-    "date": "2026-05-20",
-    "type": "expense",
-    "category": [
-      "Gifts"
-    ],
-    "method": "Card"
   }
 ]

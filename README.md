@@ -50,6 +50,7 @@ This view contains a title and cards for each existing account. Each card displa
     - Move Account Name to the beginning of the row and change to read "Account"
     - Currently, Transactions will show ALL transaction history no matter what, so if there were hundreds or thousands of records, they would ALL appear every time.
     - When updating a transaction, if the accountId is formatted incorrectly, the alert says undefined was updated successfully even with a 400 response from the server.
+- Automatic updating on Transactions page after successful completion of a POST, PATCH, or DELETE currently refreshed the whole page instead of updating the data only.
 - Account value is not currently adjusted based on transaction history, making it inaccurate.
 - Filters currently are neither visible nor functional on any page.
 - Buttons to perform creation, updating, or deleting operations currently do such thing.

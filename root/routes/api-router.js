@@ -8,22 +8,25 @@ const transactionsAPIController = require('../controllers/api/transactions-api')
 const accountsAPIController = require('../controllers/api/accounts-api');
 const categoriesAPIController = require('../controllers/api/categories-api');
 const methodsAPIController = require('../controllers/api/methods-api');
+const TransactionValidator = require('../middleware/validation/transaction-validation'); // Maybe move to be inside transaction controller model at some point? Idk. Okay here for now. #TODO
+
 
 /* Create router */
 const router = express.Router();
 
 /* Define transactions routes */
 
-// Get all transactions
+// Get all transactions – No body. Eventual query parameters for filtering, sorting, pagination, etc. #TODO
 router.get('/transactions', transactionsAPIController.getTransactions);
-// Get 1 transaction by id
-router.get('/transactions/:id', transactionsAPIController.getTransactionById); // Matches a URL like: /api/transactions/1 (1 is the hypoethical transaction id)
-// Post a new transaction #TODO: TEST then add validation
-router.post('/transactions', transactionsAPIController.postTransaction);
-// Patch (update) a transaction by id #TODO: TEST then add validation
-router.patch('/transactions/:id', transactionsAPIController.updateTransaction);
-// Delete a transaction by id #TODO: TEST then add validation
-router.delete('/transactions/:id', transactionsAPIController.deleteTransaction);
+// Get transaction by id – No body, usually just validating the ID in the param
+router.get('/transactions/:id', TransactionValidator.checkIdExists, transactionsAPIController.getTransactionById); // Matches a URL like: /api/transactions/1 (1 is the hypoethical transaction id)
+// Post a new transaction – Validates the req body
+router.post('/transactions', TransactionValidator.create, transactionsAPIController.postTransaction);
+// Patch (update) a transaction by id – Validates ID and body
+router.patch('/transactions/:id', TransactionValidator.update, transactionsAPIController.updateTransaction);
+// Delete a transaction by id – Validates ID
+router.delete('/transactions/:id', TransactionValidator.checkIdExists, transactionsAPIController.deleteTransaction);
+
 
 /* Define accounts routes */
 // Get all accounts

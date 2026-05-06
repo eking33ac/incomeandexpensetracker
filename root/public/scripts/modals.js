@@ -2,6 +2,35 @@
 
 /* Create and manage transaction modals with client-side form validation */
 
+// Helper: Handle errors in responses for POST/PATCH requests and display them in the modal form
+function handleTransactionErrors(response, fields, modal) {
+    // Clear previous errors
+    Object.values(fields).forEach(field => {
+        if (field.input) field.input.classList.remove('invalid');
+        if (field.error) field.error.textContent = '';
+    });
+    if (fields.general && fields.general.error) fields.general.error.textContent = '';
+
+    if (response && response.error) {
+        let handled = false;
+        if (response.fields) {
+            Object.entries(response.fields).forEach(([field, message]) => {
+                if (fields[field]) {
+                    fields[field].error.textContent = message;
+                    fields[field].input.classList.add('invalid');
+                    handled = true;
+                }
+            });
+        }
+        // If no field matched or no fields object, show a general error
+        if (!handled && fields.general && fields.general.error) {
+            fields.general.error.textContent = response.error;
+        }
+        return true;
+    }
+    return false;
+}
+
 // Helper: Create the basic modal structure
 function createModalSkeleton() {
     const modal = document.createElement("div");
@@ -126,9 +155,14 @@ function createCategoryField() {
 function createFormFields(form, transactionType) {
     const fields = {};
 
+    // General error field to put server errors in if server error doesn't match a field name
+    fields.general = { error: document.createElement('div') };
+    fields.general.error.classList.add('general-error');
+    form.insertBefore(fields.general.error, form.firstChild);
+
     // Standard fields
     fields.name = createField('Transaction Name', Object.assign(document.createElement('input'), { type: 'text', name: 'transactionName', required: true, placeholder: 'Transaction name' }));
-    fields.type = createField('Transaction Type', Object.assign(document.createElement('input'), { type: 'text', name: 'transactionType', value: transactionType, readOnly: true }));
+    fields.type = createField('Type', Object.assign(document.createElement('input'), { type: 'text', name: 'transactionType', value: transactionType, readOnly: true }));
     fields.date = createField('Date', Object.assign(document.createElement('input'), { type: 'date', name: 'transactionDate', required: true }));
     fields.amount = createField('Amount', Object.assign(document.createElement('input'), { type: 'number', name: 'transactionAmount', required: true, step: '0.01', min: '0.01', placeholder: '0.00' }));
 
@@ -172,8 +206,15 @@ function createFormFields(form, transactionType) {
     populateSelect(methodSelect, getMethodsData, 'id', 'name', 'Failed to load methods');
     fields.method = createField('Method', methodSelect);
 
+    
     // Append all fields
-    Object.values(fields).forEach(field => form.appendChild(field.wrapper));
+    Object.values(fields).forEach(field => {
+        if (field.wrapper) form.appendChild(field.wrapper);
+    });    
+    // General error field to put server errors in if server error doesn't match a field name
+    fields.general = { error: document.createElement('div') };
+    fields.general.error.classList.add('general-error');
+    form.insertBefore(fields.general.error, form.firstChild);
 
     return fields;
 }
@@ -309,12 +350,13 @@ function CreateModalNewTransaction(transactionType) {
         // Post to the server with the new transaction data
         postTransactionData(newTransaction)
             .then(response => {
+                if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
                 console.log("Server response:", response);
                 alert(`Transaction "${response.name}" created successfully!`);
                 modal.remove();
                 // Optionally, refresh the transaction list or create the row
             })
-            .catch(err => {
+            .catch(err => { // Generic error for now. In the future, could check error type/message and display specific messages for different cases (e.g. network error vs server validation error vs unexpected server error)
                 console.error('Failed to create transaction:', err);
                 alert('Failed to create transaction. Please try again.');
             });
@@ -392,6 +434,7 @@ function CreateModalEditTransaction(transactionId) {
                 };
                 patchTransactionData(transaction.id, updatedTransaction)
                     .then(response => {
+                        if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
                         alert(`Transaction "${response.name}" updated successfully!`);
                         modal.remove();
                         // Optionally, refresh the transaction list or create the row

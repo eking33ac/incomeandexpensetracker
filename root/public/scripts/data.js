@@ -10,6 +10,11 @@ function getTransactionsData() {
     return fetch('/api/transactions').then(r => r.json());
 }
 
+// Fetch transaction by ID
+function getTransactionById(transactionId) {
+    return fetch(`/api/transactions/${transactionId}`).then(r => r.json());
+}
+
 // Post new transaction data
 function postTransactionData(transaction) {
     return fetch('/api/transactions', {

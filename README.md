@@ -114,6 +114,9 @@ By default, the server is configured to run on **Port 5000**.
 
 ### Base URL and PORT for the Server
 
+Port: 5000
+URL: http://localhost:5000/
+
 ### API Summary
 
 Full documentation is available in /root/API_DOCS.md
@@ -151,3 +154,13 @@ GET /categories
 
 GET /methods
     Fetches JSON of all transaction payment methods for the frontend to turn into an array.
+
+## Database Setup
+
+### Creating the Local Database
+
+### Running the Migration
+
+### Running the Seed Script
+
+### Starting the Server and Verifying Connection String

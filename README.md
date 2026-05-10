@@ -80,6 +80,7 @@ The application relies on the following packages (defined in `/root/package.json
 *   **ejs**: The templating engine for rendering views.
 *   **body-parser**: Middleware to handle incoming request data.
     **express-validator**: Middleware for validating and sanitizing incoming request bodies and parameters.
+    **mysql2**: Driver/library to connect to the MySQL database.
 *   **nodemon** (Dev Dependency): Automatically restarts the server when code changes.
 
 > **Note:** The versions defined in `/root/package.json` are what the application was built with. For guaranteed functionality, use these versions or newer (assuming backwards compatibility).
@@ -158,6 +159,8 @@ GET /methods
 ## Database Setup
 
 ### Creating the Local Database
+
+Have XAMPP installed. 
 
 ### Running the Migration
 

@@ -3,7 +3,7 @@ const { body, param, validationResult } = require('express-validator');
 
 /* project's imports */
 const TransactionManager = require('../../models/orm-services/transaction-manager');
-const transactionManager = new TransactionManager('./data/transaction-data.json');
+const transactionManager = new TransactionManager(); // No connection needed; transaction manager will use the transaction database module directly for database operations
 
 // Helper to catch errors and prevent moving to the controller
 const validate = (req, res, next) => {

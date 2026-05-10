@@ -1,19 +1,20 @@
 /* Transaction Manager class */
 
 // filereader, to be replaced with database conn in the future
-const fs = require('fs');
-// TODO: Will call database functions instead of filereader functions (db funct locateed in models/database/transaction-db.js aka ../database/transaction-db.js)
+// const fs = require('fs');
+const transactionDb = require('../../database/transaction-db'); // Import the transaction database module for database operations
+
 
 class TransactionManager {
-  constructor(jsonFilePath) {
-    // this.connection = connection;
-    this.jsonFilePath = jsonFilePath;
+  constructor() {
+    // No connection needed; uses transactionDb directly
   }
 
-  // Get all transactions from the json file
+  // Get all transactions from the database
   fetchAll(callback) {
-    const allTransactions = JSON.parse(fs.readFileSync(this.jsonFilePath, 'utf-8'));
-    callback(allTransactions);
+    transactionDb.getAllTransactions()
+      .then(allTransactions => callback(allTransactions))
+      .catch(err => console.error('Error fetching transactions: ', err));
   }
 
   fetchById(id, callback) { // TODO: Add validation to ensure id exists and is a number

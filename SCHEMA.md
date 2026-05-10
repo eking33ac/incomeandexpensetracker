@@ -13,19 +13,23 @@ For every table: column name, data type, constraints (NOT NULL, UNIQUE, DEFAULT,
     name            VARCHAR(255)            NOT NULL DEFAULT
     amount          DECIMAL(10, 2)          NOT NULL UNSIGNED
     date            DATE                    NOT NULL
-    type            VARCHAR(7)              NOT NULL CHECK
+    type            VARCHAR(7)              NOT NULL
     account_id      INTEGER                 NOT NULL            Foreign
     category        VARCHAR(20)             NOT NULL
     payment_method  VARCHAR(20)             NOT NULL
 
 ** Account **
-    id              INT AUTO_INCREMENT  UNIQUE NOT NULL     PRIMARY
+    id              INT AUTO_INCREMENT  NOT NULL     PRIMARY
     name            VARCHAR (50)        NOT NULL
     base_balance    INTEGER (10,2)      NOT NULL
-    display_color   VARCHAR (6)         NOT NULL CHECK
+    display_color   VARCHAR (6)         NOT NULL
 
 ## Normalization notes:
 
 Unlike the current functional implementation made with a file datastore, this schema presumes category is individual.
 
 Account display color does not necessarily depend on account, but for simplicity, since there are so few fields, it is included rather than stored in a separate "AccountColor" table.
+
+Display color is kept as VARCHAR so it is easy to continue using the current implementation of hexcodes as stored text, as opposed to using binary storage and/or learning to utilize Hex and unHex functions.
+
+Category, payment method, and type would typically be lookup values. However, as the front end does not currently treat them as such, the initial backend is being created with the same structure for testing purposes.

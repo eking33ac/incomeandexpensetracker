@@ -5,7 +5,7 @@ const express = require('express');
 /* project's imports */
 // const rootDir = require('../util/path');
 const TransactionManager = require('../../models/orm-services/transaction-manager');
-const transactionManager = new TransactionManager('./data/transaction-data.json');
+const transactionManager = new TransactionManager(); // No connection needed; transaction manager will use the transaction database module directly for database operations');
 
 
 /* fetch all transactions */

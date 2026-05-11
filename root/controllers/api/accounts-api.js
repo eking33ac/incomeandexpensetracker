@@ -5,7 +5,7 @@ const express = require('express');
 /* project's imports */
 // const rootDir = require('../util/path');
 const AccountsManager = require('../../models/orm-services/account-manager');
-const accountsManager = new AccountsManager('./data/account-data.json');
+const accountsManager = new AccountsManager();
 
 
 /* fetch all accounts */

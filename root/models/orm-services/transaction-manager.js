@@ -20,7 +20,7 @@ class TransactionManager {
           amount: t.amount,
           type: t.type,
           date: t.date.toISOString().slice(0, 10), // Convert date to 'YYYY-MM-DD' format
-          accountId: t.accountId,
+          accountId: t.account_id,
           category: t.category,
           method: t.method
         }))

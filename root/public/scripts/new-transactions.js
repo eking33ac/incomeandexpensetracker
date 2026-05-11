@@ -172,7 +172,7 @@ function renderTransactionsData(accountsData, transactionsData, categoriesData, 
                 
 
                 // Find account name and append to row
-                let account = accountsData.find(account => account.id === transaction.accountId);
+                let account = accountsData.find(account => String(account.id) === String(transaction.accountId)); // Ensure the data types are the same
                 const accountNameTd = document.createElement('td');
                 accountNameTd.textContent = account ? account.name : 'Unknown Account';
                 row.appendChild(accountNameTd);

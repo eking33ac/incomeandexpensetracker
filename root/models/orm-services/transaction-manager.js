@@ -13,6 +13,18 @@ class TransactionManager {
   // Get all transactions from the database
   fetchAll(callback) {
     transactionDb.getAllTransactions()
+      .then(allTransactions => 
+        allTransactions.map(t => ({
+          id: t.id,
+          name: t.name,
+          amount: t.amount,
+          type: t.type,
+          date: t.date.toISOString().slice(0, 10), // Convert date to 'YYYY-MM-DD' format
+          accountId: t.accountId,
+          category: t.category,
+          method: t.method
+        }))
+      )
       .then(allTransactions => callback(allTransactions))
       .catch(err => console.error('Error fetching transactions: ', err));
   }

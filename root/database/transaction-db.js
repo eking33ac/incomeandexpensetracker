@@ -2,20 +2,17 @@
 /* Transaction SQL CRUD functions */
 
 const mysql = require('mysql2/promise');
-const dbConfig = require('../config/dbconfig');
+const pool = require('../config/dbconfig');
 
 // Get all transactions from the database
 async function getAllTransactions() {
-    let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('SELECT * FROM Transaction');
+        const [rows] = await pool.query('SELECT * FROM Transaction');
         return rows;
     } catch (err) {
         console.error('Error fetching transactions: ', err);
-        throw err;
-    } finally {
-        if (connection) await connection.end();
+        return res.status(500).json({ error: 'Internal server error: Failed to fetch transactions' });
+        
     }
 }
 

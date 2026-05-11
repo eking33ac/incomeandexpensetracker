@@ -1,6 +1,6 @@
 /* Database Connection data array */
 
-const mysql2 = require('mysql2');
+const mysql2 = require('mysql2/promise');
 
 // set up database CONFIG, NOT CONNECTION
 const config = ({
@@ -34,4 +34,6 @@ const config = ({
 //     });
 // });
 
-module.exports = config;
+const pool = mysql2.createPool(config);
+
+module.exports = pool;

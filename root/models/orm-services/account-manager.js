@@ -1,19 +1,20 @@
 /* Account Manager class */
 
-// filereader, to be replaced with database conn in the future
-const fs = require('fs');
-// TODO: Will call database functions instead of filereader functions (db funct locateed in models/database/transaction-db.js aka ../database/transaction-db.js)
+
+const accountDb = require('../../database/account-db');
 
 class AccountManager {
-  constructor(jsonFilePath) {
-    // this.connection = connection;
-    this.jsonFilePath = jsonFilePath;
+  constructor() {
+    // No connection or file path needed; uses accountDb directly
   }
 
-  // Get all accounts from the json file
+  // Get all accounts from the database
   fetchAll(callback) {
-    const allAccounts = JSON.parse(fs.readFileSync(this.jsonFilePath, 'utf-8'));
-    callback(allAccounts);
+    accountDb.getAllAccounts()
+      .then(allAccounts => 
+        {console.log("Fetched all accounts in manager");
+        callback(allAccounts); })
+      .catch(err => console.error('Error fetching accounts: ', err));
   }
 
   fetchById(id, callback) { // TODO: Add validation to ensure id exists and is a number

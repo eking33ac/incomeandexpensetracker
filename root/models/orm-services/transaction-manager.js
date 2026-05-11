@@ -54,32 +54,16 @@ class TransactionManager {
       });
   }
 
-  // Create a new transaction and save it to the json file.
+  // Create a new transaction in the database
   create(newTransactionData, callback) {
-    this.fetchAll(allTransactions => {
-      // Find the largest existing id (number), ignoring any undefined/null/NaN ids
-      let maxId = 0;
-      allTransactions.forEach(t => {
-        if (typeof t.id === 'number' && !isNaN(t.id) && t.id > maxId) {
-          maxId = t.id;
-        }
+    transactionDb.createTransaction(newTransactionData)
+      .then(newTransaction => {
+        callback(null, newTransaction);
+      })
+      .catch(err => {
+        console.error('Error creating transaction:', err);
+        callback(err, null);
       });
-      const newId = maxId + 1;
-      // Always order fields: id, name, amount, type, date, accountId, category, method
-      const {
-        name,
-        amount,
-        date,
-        type,
-        accountId,
-        category,
-        method
-      } = newTransactionData;
-      const newTransaction = { id: newId, name, amount, type, date, accountId, category, method };
-      allTransactions.push(newTransaction);
-      fs.writeFileSync(this.jsonFilePath, JSON.stringify(allTransactions, null, 2), 'utf-8');
-      callback(newTransaction);
-    });
   }
 
   // Update a transaction by id. In the future, this will update a single transaction in the database instead of overwriting all transactions in a json file.

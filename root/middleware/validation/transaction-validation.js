@@ -36,10 +36,21 @@ const isValidTransactionType = (value) => {
   return value === 'income' || value === 'expense';
 };
 
-// Helper to validate category is a non-empty array of strings
-// Returns true if value is an array of non-empty strings
-const isValidCategoryArray = (value) => {
-  return Array.isArray(value) && value.length > 0 && value.every(item => typeof item === 'string' && item.trim() !== '');
+
+// Helper to validate category is a non-empty array of strings (future version)
+// const isValidCategoryArray = (value) => {
+//   return Array.isArray(value) && value.length > 0 && value.every(item => typeof item === 'string' && item.trim() !== '');
+// };
+
+// Helper to validate category is a non-empty string or an array of length 1 with a non-empty string
+const isValidCategorySingle = (value) => {
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  if (Array.isArray(value) && value.length === 1 && typeof value[0] === 'string') {
+    return value[0].trim() !== '';
+  }
+  return false;
 };
 
 module.exports = {
@@ -88,8 +99,10 @@ module.exports = {
       .isISO8601().withMessage('Date must be of type Date'),
     body('type')
       .custom(isValidTransactionType).withMessage('Type must be Income or Expense'),
+    // body('category')
+    //   .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'), // TODO Future vers goes back to nonempty array of ids
     body('category')
-      .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'),
+      .custom(isValidCategorySingle).withMessage('Category must be a non-empty string or array of one non-empty string'),
     body('method')
       .isString().notEmpty().withMessage('Payment Method must be of type String'),
     (req, res, next) => {
@@ -131,9 +144,12 @@ module.exports = {
     body('type')
       .optional()
       .custom(isValidTransactionType).withMessage('Type must be Income or Expense'),
+    // body('category') // TODO future vers goes back to nonempty array of ids
+    //   .optional()
+    //   .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'),
     body('category')
       .optional()
-      .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'),
+      .custom(isValidCategorySingle).withMessage('Category must be a non-empty string or array of one non-empty string'),
     body('method')
       .optional()
       .isString().notEmpty().withMessage('Payment Method must be of type String'),

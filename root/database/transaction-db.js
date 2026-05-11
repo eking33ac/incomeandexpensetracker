@@ -40,10 +40,28 @@ async function deleteTransactionById(id) {
     }
 }
 
+async function createTransaction(transactionData) {
+    try {
+        const { name, amount, date, type, accountId, category, method } = transactionData;
+        const [result] = await pool.query(
+            'INSERT INTO Transaction (name, amount, date, type, account_id, category, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [name, amount, date, type, accountId, category, method]
+        );
+        return { id: result.insertId, name, amount, date, type, accountId, category, method };
+    } catch (err) {
+        throw err;
+    }
+}
+
+async function deleteById() {
+
+}
+
 module.exports = {
     getAllTransactions,
     getTransactionById,
-    deleteTransactionById
+    deleteTransactionById,
+    createTransaction
 };
 
 // add transaction to database

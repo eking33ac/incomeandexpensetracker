@@ -37,7 +37,11 @@ exports.getTransactionById = (req, res, next) => {
 // Post/create a new transactions (status 201)
 exports.postTransaction = (req, res, next) => {
     const newTransactionData = req.body; // access the new transaction data from the request body
-    transactionManager.create(newTransactionData, newTransaction => {
+    transactionManager.create(newTransactionData, (err, newTransaction) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Internal server error', error: err.message });
+        }
         res.status(201).json(newTransaction);
     });
 };

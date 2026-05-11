@@ -97,58 +97,18 @@ function populateSelect(select, fetchDataCallback, valueProp, textProp, errorMes
 
 // Helper: Create the custom category field
 function createCategoryField() {
-    const container = document.createElement('div');
-    container.classList.add('custom-select');
-    container.style.position = 'relative';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'Select categories';
-    button.style.width = '100%';
-    button.style.textAlign = 'left';
-    container.appendChild(button);
-    const dropdown = document.createElement('div');
-    dropdown.classList.add('custom-dropdown');
-    dropdown.style.display = 'none';
-    dropdown.style.position = 'absolute';
-    dropdown.style.top = '100%';
-    dropdown.style.left = '0';
-    dropdown.style.width = '100%';
-    dropdown.style.background = 'white';
-    dropdown.style.border = '1px solid #ccc';
-    dropdown.style.maxHeight = '200px';
-    dropdown.style.overflowY = 'auto';
-    container.appendChild(dropdown);
-
-    // Populate categories
-    getCategoriesData()
-        .then(categories => {
-            categories.forEach(cat => {
-                const label = document.createElement('label');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'transactionCategory';
-                checkbox.value = cat.id;
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(cat.name));
-                dropdown.appendChild(label);
-                dropdown.appendChild(document.createElement('br'));
-            });
-        })
-        .catch(err => console.error('Failed to load categories:', err));
-
-    // Toggle dropdown
-    button.addEventListener('click', e => {
-        e.preventDefault();
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // Update button text on checkbox change
-    dropdown.addEventListener('change', () => {
-        const checked = dropdown.querySelectorAll('input[type="checkbox"]:checked');
-        button.textContent = checked.length ? Array.from(checked).map(cb => cb.nextSibling.textContent.trim()).join(', ') : 'Select categories';
-    });
-
-    return container;
+    // Create a dropdown (select) for categories, like the method field
+    const select = document.createElement('select');
+    select.name = 'transactionCategory';
+    select.required = true;
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = 'Select a category';
+    defaultOpt.disabled = true;
+    defaultOpt.selected = true;
+    select.appendChild(defaultOpt);
+    populateSelect(select, getCategoriesData, 'id', 'name', 'Failed to load categories');
+    return select;
 }
 
 // Helper: Create all form fields
@@ -179,19 +139,9 @@ function createFormFields(form, transactionType) {
     populateSelect(accountSelect, getAccountsData, 'id', 'name', 'Failed to load accounts');
     fields.account = createField('Account', accountSelect);
 
-    // Category field (custom)
-    const categoryContainer = createCategoryField();
-    const categoryWrapper = document.createElement('div');
-    categoryWrapper.classList.add('form-row');
-    const categoryLabel = document.createElement('label');
-    categoryLabel.textContent = 'Category';
-    categoryLabel.appendChild(document.createElement('br'));
-    categoryLabel.appendChild(categoryContainer);
-    const categoryError = document.createElement('span');
-    categoryError.classList.add('field-error');
-    categoryWrapper.appendChild(categoryLabel);
-    categoryWrapper.appendChild(categoryError);
-    fields.category = { input: categoryContainer, error: categoryError, wrapper: categoryWrapper };
+    // Category field (dropdown)
+    const categorySelect = createCategoryField();
+    fields.category = createField('Category', categorySelect);
 
     // Method select
     const methodSelect = document.createElement('select');
@@ -273,9 +223,8 @@ function setupValidation(form, fields, onSubmit) {
             valid = false;
         }
 
-        const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-        if (checkedBoxes.length === 0) {
-            fields.category.error.textContent = 'Please select at least one category.';
+        if (!fields.category.input.value) {
+            fields.category.error.textContent = 'Please select a category.';
             fields.category.input.classList.add('invalid');
             valid = false;
         }
@@ -332,9 +281,8 @@ function CreateModalNewTransaction(transactionType) {
 
 
     setupValidation(form, fields, (fields) => {
-        const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-        // Always send an array of strings (category names)
-        const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).filter(Boolean);
+        // Get selected category (dropdown)
+        const categoryName = fields.category.input.options[fields.category.input.selectedIndex].textContent;
         const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
 
         // Create Transaction object with correct fields
@@ -344,7 +292,7 @@ function CreateModalNewTransaction(transactionType) {
             type: transactionType,
             date: fields.date.input.value,
             accountId: parseInt(fields.account.input.value, 10),
-            category: categoryNames, // always an array of strings
+            category: categoryName, // now a single string
             method: methodName // use the name, not the id
         };
         console.log("Posting transaction:", newTransaction);

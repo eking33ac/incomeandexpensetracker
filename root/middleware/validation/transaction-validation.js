@@ -14,10 +14,14 @@ const validate = (req, res, next) => {
   next();
 };
 
-// Helper to check if transaction ID exists
+// Helper to check if transaction ID exists, and propagate DB errors using a sentinel string
 const checkTransactionExists = (value) => {
   return new Promise((resolve, reject) => {
-    transactionManager.fetchById(value, transaction => {
+    transactionManager.fetchById(value, (err, transaction) => {
+      if (err) {
+        // Use a special string to signal DB error
+        return reject('__db_error__');
+      }
       if (!transaction) {
         return reject('Transaction id does not exist');
       }
@@ -48,15 +52,20 @@ module.exports = {
       .custom(checkTransactionExists), // custom validator to check if the transaction ID exists in the database
     (req, res, next) => {
       const errors = validationResult(req);
+      // Check for DB error in validation errors using sentinel string
+      const dbError = errors.array().find(err => err.msg === '__db_error__');
+      if (dbError) {
+        return res.status(500).json({ error: 'Internal server error', fields: { id: 'Database error while validating transaction ID' } });
+      }
       if (!errors.isEmpty()) {
         // Format errors as { fields: { fieldName: message } }
         const fields = {};
         errors.array().forEach(err => {
-            if (fields[err.param]) { // if err.param is defined
-                fields[err.param] = err.msg;
-            } else { // if err.param is not defined, put it in a general errors field
-                fields['id'] = err.msg;
-            }
+          if (err.param) {
+            fields[err.param] = err.msg;
+          } else {
+            fields['id'] = err.msg;
+          }
         });
         return res.status(400).json({ error: 'Validation failed', fields });
       }

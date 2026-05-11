@@ -10,14 +10,40 @@ async function getAllTransactions() {
         const [rows] = await pool.query('SELECT * FROM Transaction');
         return rows;
     } catch (err) {
-        console.error('Error fetching transactions: ', err);
-        return res.status(500).json({ error: 'Internal server error: Failed to fetch transactions' });
-        
+        // Let the controller handle the error
+        throw err;
+    }
+}
+
+async function getTransactionById(id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Transaction WHERE id = ?', [id]);
+        if (rows.length === 0) {
+            return null; // Not found
+        }
+        return rows[0];
+    } catch (err) {
+        // Let the controller handle the error
+        throw err;
+    }
+}
+
+async function deleteTransactionById(id) {
+    try {
+        const [result] = await pool.query('DELETE FROM Transaction WHERE id = ?', [id]);
+        if (result.affectedRows === 0) {
+            return { success: false, message: 'Transaction not found' };
+        }
+        return { success: true, message: 'Transaction deleted successfully' };
+    } catch (err) {
+        throw err;
     }
 }
 
 module.exports = {
-    getAllTransactions
+    getAllTransactions,
+    getTransactionById,
+    deleteTransactionById
 };
 
 // add transaction to database

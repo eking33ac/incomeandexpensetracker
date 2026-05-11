@@ -10,15 +10,26 @@ const transactionManager = new TransactionManager(); // No connection needed; tr
 
 /* fetch all transactions */
 exports.getTransactions = (req, res, next) => {
-    transactionManager.fetchAll(allTransactions => {
+    transactionManager.fetchAll((err, allTransactions) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Internal server error', error: err.message });
+        }
         res.status(200).json(allTransactions); // optionally(?) parse and stringify json
     });
 };
 
 // /api/transactions/1 (1 is the hypoethical transaction id)
 exports.getTransactionById = (req, res, next) => {
-    const id = req.params.id; // access the id parameter from the URL 
-    transactionManager.fetchById(id, transaction => {
+    const id = req.params.id; // access the id parameter from the URL
+    transactionManager.fetchById(id, (err, transaction) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Internal server error', error: err.message });
+        }
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
         res.status(200).json(transaction);
     });
 };
@@ -43,7 +54,14 @@ exports.updateTransaction = (req, res, next) => {
 // Delete a transaction by id
 exports.deleteTransaction = (req, res, next) => {
     const id = req.params.id; // access the id parameter from the URL
-    transactionManager.deleteById(id, message => {
-        res.status(200).json(message);
+    transactionManager.deleteById(id, (err, result) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Internal server error', error: err.message });
+        }
+        if (!result) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        res.status(200).json(result);
     });
 };

@@ -6,34 +6,52 @@ const transactionDb = require('../../database/transaction-db'); // Import the tr
 
 
 class TransactionManager {
-  constructor() {
-    // No connection needed; uses transactionDb directly
-  }
+  constructor() { /* No connection needed; uses transactionDb directly */ }
 
   // Get all transactions from the database
   fetchAll(callback) {
     transactionDb.getAllTransactions()
-      .then(allTransactions => 
-        allTransactions.map(t => ({
+      .then(allTransactions =>
+        callback(null, allTransactions.map(t => ({
           id: t.id,
           name: t.name,
           amount: t.amount,
           type: t.type,
           date: t.date.toISOString().slice(0, 10), // Convert date to 'YYYY-MM-DD' format
-          accountId: t.account_id,
+          accountId: t.account_id,  // rename to have consistent camelCase field names outside the database layer
           category: t.category,
           method: t.method
-        }))
+        })))
       )
-      .then(allTransactions => callback(allTransactions))
-      .catch(err => console.error('Error fetching transactions: ', err));
+      .catch(err => {
+        console.error('Error fetching transactions: ', err);
+        callback(err, null);
+      });
   }
 
   fetchById(id, callback) { // TODO: Add validation to ensure id exists and is a number
-    this.fetchAll(allTransactions => {
-      const transaction = allTransactions.find(t => t.id === parseInt(id));
-      callback(transaction);
-    });
+    transactionDb.getTransactionById(id)
+      .then(transaction => {
+        if (transaction) { // if the transaction with the specified id is found, format it and return it
+          const formattedTransaction = {
+            id: transaction.id,
+            name: transaction.name,
+            amount: transaction.amount,
+            type: transaction.type,
+            date: transaction.date.toISOString().slice(0, 10), // Convert date to 'YYYY-MM-DD' format
+            accountId: transaction.account_id,  // rename to have consistent camelCase field names outside the database layer
+            category: transaction.category,
+            method: transaction.method
+          };
+          callback(null, formattedTransaction); // no error, found
+        } else {
+          callback(null, null); // no error, not found
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching transaction by id: ', err);
+        callback(err, null); // error occurred
+      });
   }
 
   // Create a new transaction and save it to the json file.
@@ -80,13 +98,20 @@ class TransactionManager {
   }
 
 
-  /* Overwrites all transactions with the updated transaction data. In the future, this will update a single transaction in the database instead of overwriting all transactions in a json file. */
+  // Delete a transaction by id using the database
   deleteById(id, callback) {
-    this.fetchAll(allTransactions => {
-      const updatedTransactions = allTransactions.filter(t => t.id !== parseInt(id)); // get all transactions except the one with the specified id
-      fs.writeFileSync(this.jsonFilePath, JSON.stringify(updatedTransactions, null, 2), 'utf-8'); // overwrite the json file with the updated transactions array
-      callback({ message: `Transaction with id ${id} deleted successfully.` }); // return message
-    });
+    transactionDb.deleteTransactionById(id)
+      .then(result => {
+        if (!result.success) {
+          // Not found
+          return callback(null, null);
+        }
+        callback(null, { message: result.message });
+      })
+      .catch(err => {
+        console.error('Error deleting transaction:', err);
+        callback(err, null);
+      });
   }
 }
 

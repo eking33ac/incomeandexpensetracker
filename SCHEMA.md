@@ -9,6 +9,8 @@ The Account table represents a place the user has stored USD currency in the rea
 For every table: column name, data type, constraints (NOT NULL, UNIQUE, DEFAULT, CHECK), and whether it is a primary key or foreign key.
 
 **Transaction**
+|    Field Name     | Data Type              | Constraints | Key |
+|---|---|---|---|
 |    id             | INT AUTO_INCREMENT     | NOT NULL           | Primary
 |    name           | VARCHAR(255)           | NOT NULL DEFAULT   |
 |    amount         | DECIMAL(10, 2)         | NOT NULL UNSIGNED  |
@@ -19,10 +21,12 @@ For every table: column name, data type, constraints (NOT NULL, UNIQUE, DEFAULT,
 |    payment_method | VARCHAR(20)            | NOT NULL           |
 
 **Account**
-|    id            | INT AUTO_INCREMENT   | NOT NULL        | Primary
-|    name          |  VARCHAR (50)        | NOT NULL        |
-|    base_balance  |  INTEGER (10,2)      | NOT NULL        |
-|    display_color |  VARCHAR (6)         | NOT NULL        |
+|    Field Name     | Data Type           | Constraints     | Key     |
+|---|---|---|---|
+|    id            | INT AUTO_INCREMENT   | NOT NULL        | Primary |
+|    name          |  VARCHAR (50)        | NOT NULL        |         |
+|    base_balance  |  INTEGER (10,2)      | NOT NULL        |         |
+|    display_color |  VARCHAR (6)         | NOT NULL        |         |
 
 ## Normalization notes:
 

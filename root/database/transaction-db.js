@@ -2,7 +2,8 @@
 /* Transaction SQL CRUD functions */
 
 const mysql = require('mysql2/promise');
-const pool = require('../config/dbconfig');
+const dbconfig = require('../config/dbconfig');
+const pool = dbconfig.pool;
 
 // Get all transactions from the database
 async function getAllTransactions() {

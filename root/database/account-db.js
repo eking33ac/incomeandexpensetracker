@@ -1,7 +1,8 @@
 /* Account SQL CRUD functions */
 
 const mysql = require('mysql2/promise');
-const pool = require('../config/dbconfig');
+const dbconfig = require('../config/dbconfig');
+const pool = dbconfig.pool;
 
 // Get all accounts from the database
 async function getAllAccounts() {
@@ -10,8 +11,8 @@ async function getAllAccounts() {
         const [rows] = await pool.query('SELECT * FROM Account');
         return rows;
     } catch (err) {
-        console.error('Error fetching accounts: ', err);
-        return res.status(500).json({ error: 'Internal server error: Failed to fetch transactions' });
+        // console.error('Error fetching accounts: ', err);
+        throw err;
         // throw err;
     }
 }

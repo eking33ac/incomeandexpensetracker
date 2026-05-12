@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   `category` varchar(20) NOT NULL,
   `payment_method` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `account_id` (`account_id`)
+  KEY `account_id` (`account_id`),
+  CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -67,9 +68,6 @@ CREATE TABLE IF NOT EXISTS `transaction` (
 --
 -- Constraints for table `transaction`
 --
-ALTER TABLE `transaction`
-  ADD CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

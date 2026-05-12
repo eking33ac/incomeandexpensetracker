@@ -36,4 +36,11 @@ const config = ({
 
 const pool = mysql2.createPool(config);
 
-module.exports = pool;
+module.exports = {
+    DB_HOST: config.host,
+    DB_USER: config.user,
+    DB_PASSWORD: config.password,
+    DB_DATABASE: config.database,
+    pool: pool,
+    config: config,
+}

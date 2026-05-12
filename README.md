@@ -158,6 +158,8 @@ GET /methods
 
 ## Database Setup
 
+Follow these steps to get your local environment running. This project uses MySQL (compatible with XAMPP/phpMyAdmin).
+
 ### Creating the Local Database
 
 Have XAMPP installed. 

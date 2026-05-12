@@ -5,7 +5,7 @@
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`id`, `name`, `base_balance`, `display_color`) VALUES
+INSERT IGNORE INTO `account` (`id`, `name`, `base_balance`, `display_color`) VALUES -- IGNORE to prevent duplicate entries if run multiple times
 (4, 'Checking', 1500.45, '3A8355'),
 (5, 'Saving', 2500.00, '3A79B5'),
 (6, 'Wallet', 3055.00, 'EEB564');
@@ -15,7 +15,7 @@ INSERT INTO `account` (`id`, `name`, `base_balance`, `display_color`) VALUES
 -- Dumping data for table `transaction`
 --
 
-INSERT INTO `transaction` (`id`, `name`, `amount`, `date`, `type`, `account_id`, `category`, `payment_method`) VALUES
+INSERT IGNORE INTO `transaction` (`id`, `name`, `amount`, `date`, `type`, `account_id`, `category`, `payment_method`) VALUES
 (1, 'Popcorn Seller Salary', 652.34, '2026-05-08', 'income', 4, 'Salary', 'Bank Transfer'),
 (2, 'Grocery Shopping', 50.32, '2026-05-09', 'expense', 4, 'Groceries', 'Card'),
 (3, 'Electricity Bill', 124.56, '2026-05-14', 'expense', 4, 'Utilities', 'Bank Transfer'),

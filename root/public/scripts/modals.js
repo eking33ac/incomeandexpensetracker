@@ -368,9 +368,8 @@ function CreateModalEditTransaction(transactionId) {
             fields.method.input.value = transaction.methodId; // Does this exist here?
 
             setupValidation(form, fields, (fields) => {
-                const checkedBoxes = fields.category.input.querySelectorAll('input[type="checkbox"]:checked');
-                // Always send an array of strings (category names)
-                const categoryNames = Array.from(checkedBoxes).map(cb => cb.nextSibling.textContent.trim()).filter(Boolean);
+                // Get selected category (dropdown)
+                const categoryName = fields.category.input.options[fields.category.input.selectedIndex].textContent;
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
                 // Ensure id is always an integer
                 const intId = Number.isInteger(transaction.id) ? transaction.id : parseInt(transaction.id, 10);
@@ -381,7 +380,7 @@ function CreateModalEditTransaction(transactionId) {
                     date: fields.date.input.value,
                     amount: parseFloat(fields.amount.input.value),
                     accountId: parseInt(fields.account.input.value, 10),
-                    category: categoryNames, //  always an array of strings
+                    category: categoryName, // now a single string
                     method: methodName // use the name, not the id
                 };
                 console.log("Updating transaction with data:", updatedTransaction);

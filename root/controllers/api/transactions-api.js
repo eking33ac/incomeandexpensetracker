@@ -50,7 +50,14 @@ exports.postTransaction = (req, res, next) => {
 exports.updateTransaction = (req, res, next) => {
     const id = req.params.id; // access the id parameter from the URL
     const updatedData = req.body; // access the updated transaction data from the request body
-    transactionManager.updateById(id, updatedData, updatedTransaction => {
+    transactionManager.updateById(id, updatedData, (err, updatedTransaction) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Internal server error', error: err.message });
+        }
+        if (!updatedTransaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
         res.status(200).json(updatedTransaction);
     });
 };

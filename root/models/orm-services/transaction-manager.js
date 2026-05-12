@@ -66,19 +66,26 @@ class TransactionManager {
       });
   }
 
-  // Update a transaction by id. In the future, this will update a single transaction in the database instead of overwriting all transactions in a json file.
+  // Update a transaction by id using the database
   updateById(id, updatedData, callback) {
-    this.fetchAll(allTransactions => {
-      const updatedTransactions = allTransactions.map(t => {
-        if (t.id === parseInt(id)) {
-          return { ...t, ...updatedData }; // merge the existing transaction data with the updated data, giving precedence to the updated data in case of overlapping fields (TODO: Vscode suggested this and the comment, so check if that is ACTUALLY the case)
+    transactionDb.updateTransactionById(id, updatedData)
+      .then(result => {
+        if (!result.success) {
+          // Not found
+          return callback(null, null);
         }
-        return t;
+        // Optionally, fetch the updated transaction to return the new data
+        this.fetchById(id, (err, updatedTransaction) => {
+          if (err) {
+            return callback(err, null);
+          }
+          callback(null, updatedTransaction);
+        });
+      })
+      .catch(err => {
+        console.error('Error updating transaction:', err);
+        callback(err, null);
       });
-      fs.writeFileSync(this.jsonFilePath, JSON.stringify(updatedTransactions, null, 2), 'utf-8'); // overwrite the json file with the updated transactions array
-      const updatedTransaction = updatedTransactions.find(t => t.id === parseInt(id));
-      callback(updatedTransaction);
-    });
   }
 
 

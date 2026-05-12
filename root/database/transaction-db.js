@@ -53,7 +53,20 @@ async function createTransaction(transactionData) {
     }
 }
 
-async function deleteById() {
+async function updateTransactionById(id, updatedData) {
+    try {
+        const { name, amount, date, type, accountId, category, method } = updatedData;
+        const [result] = await pool.query(
+            'UPDATE Transaction SET name = ?, amount = ?, date = ?, type = ?, account_id = ?, category = ?, payment_method = ? WHERE id = ?',
+            [name, amount, date, type, accountId, category, method, id]
+        );
+        if (result.affectedRows === 0) {
+            return { success: false, message: 'Transaction not found' };
+        }
+        return { success: true, message: 'Transaction updated successfully' };
+    } catch (err) {
+        throw err;
+    }
 
 }
 
@@ -61,7 +74,8 @@ module.exports = {
     getAllTransactions,
     getTransactionById,
     deleteTransactionById,
-    createTransaction
+    createTransaction,
+    updateTransactionById
 };
 
 // add transaction to database

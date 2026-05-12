@@ -1,4 +1,4 @@
-HELLO! This README will continue to be a work in progress throughout project development. It is currently in progress with untested How to Run It instructions, out of date Known Issues and Limitations, and a WIP Backend section.
+HELLO! This README will continue to be a work in progress throughout project development. It is currently in progress with untested How to Run It & Backend sections and out of date Known Issues and Limitations. Essentially everything aside from the Database section is some level of out of date.
 I love you! K bye! <3
 
 #### Notes
@@ -156,7 +156,7 @@ GET /categories
 GET /methods
     Fetches JSON of all transaction payment methods for the frontend to turn into an array.
 
-## Database Setup
+## Database Setup (5/12/2026)
 
 Follow these steps to get your local environment running. This project uses MySQL (compatible with XAMPP/phpMyAdmin).
 
@@ -209,8 +209,10 @@ To verify the setup:
 
 - Check the Terminal: You should see a message saying Server is running on port 5000 followed by a database connection success message.
     - Ex: 
+    ```bash
     🚀 Server is running on port 5000
     ✅ Connected to MySQL Database: moneytracker_db
+    ```
 
 - Test the API: Open your browser (or Postman, if you prefer) and visit:
 http://localhost:5000/api/transactions

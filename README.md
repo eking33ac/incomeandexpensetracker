@@ -160,12 +160,58 @@ GET /methods
 
 Follow these steps to get your local environment running. This project uses MySQL (compatible with XAMPP/phpMyAdmin).
 
-### Creating the Local Database
+### Prerequisites: Database Server
+This project requires a MySQL database. This application was run and tested locally using XAMPP. If you prefer a different platform, ignore this section and proceed with the MySQL server of your own whims. I wish you luck with them.
 
-Have XAMPP installed. 
+1. Download & Install XAMPP: Download here: https://www.apachefriends.org/index.html
 
-### Running the Migration
+2. Launch the Control Panel: Open the XAMPP Control Panel application.
 
-### Running the Seed Script
+3. Start MySQL: Click the Start button next to "MySQL".
 
-### Starting the Server and Verifying Connection String
+    - Note: You do not need to start Apache for this project to work.
+
+4. Keep it Running: Keep the XAMPP Control Panel open while you are developing or testing the app.
+
+### 1. Configuration
+
+Before running the app, ensure the database credentials match your local environment:
+
+- Open root/config/dbconfig.js.
+- Update the host, user, and password properties if they differ from the defaults (Default: localhost, root, no password).
+- Note: Leave the database name the same. If you change it here, you also need to update it on line 25 of root/migration.sql
+- Note: The app runs on PORT 5000 by default. To update this, go to the end of root/app.js. Update the line that reads `const PORT = 5000;` and change the number to any port you wish to run the application on.
+
+### 2. Initialize the Database
+
+You do not need to manually create the database in phpMyAdmin. We have provided a script that creates the database, sets up the tables, and populates them with test data automatically.
+
+Run the following command in your terminal:
+```bash
+npm run db:init
+```
+
+**This will:**
+- **Create the Database:** Executes CREATE DATABASE IF NOT EXISTS as defined in root/migration.sql
+- **Run Migrations:** Builds necessary tables and constraints
+- **Seed Data:** Inserts initial test data records from seed.sql
+
+### 3. Starting the Server
+
+Once the database is initialized, start the application:
+```bash
+npm start
+```
+
+### 4. Verifying the Connection
+
+To verify the setup:
+
+- Check the Terminal: You should see a message saying Server is running on port 5000 followed by a database connection success message.
+    - Ex: 
+    🚀 Server is running on port 5000
+    ✅ Connected to MySQL Database: moneytracker_db
+
+- Test the API: Open your browser (or Postman, if you prefer) and visit:
+http://localhost:5000/api/transactions
+    - Success: You should see the JSON data that was inserted during the seeding process.

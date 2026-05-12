@@ -17,6 +17,25 @@ const apiRoutes = require('./routes/api-router');
 // Middleware imports
 const logger = require('./middleware/logger');
 const jsonValidation = require('./middleware/validation/json-validation'); // Middleware for validating JSON request bodies for API routes. To be implemented when API routes are ready.
+// Database imports
+const dbconfig = require('./config/dbconfig');
+const pool = dbconfig.pool; // Get the connection pool from the database configuration module
+
+
+/* Test database connection and alert if connection succeeds or fails. */
+pool.getConnection()
+  .then(connection => {
+    console.log('✅ Connected to MySQL Database:', dbconfig.DB_DATABASE);
+    connection.release(); // Always release the connection back to the pool!
+  })
+  .catch(err => {
+    console.error('❌ Database connection failed!');
+    console.error('Error details:', err.message);
+    process.exit(1); // Exit the application with an error code
+  });
+
+
+
 
 /* create app */
 const app = express();
@@ -52,21 +71,3 @@ const PORT = 5000; //process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
-
-
-
-// Connect to MySQL database using mysql2 package
-// To be implemented in when database connection is needed. For now, data is stored in json files for development purposes.
-/* const mysql = require('mysql2');
-
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',  // Default user in XAMPP
-  password: '',  // Default password (empty in XAMPP)
-  database: 'moneytracker_db'
-});
-
-connection.connect(err => {
-  if (err) throw err;
-  console.log('✅ Connected to MySQL!');
-}); */

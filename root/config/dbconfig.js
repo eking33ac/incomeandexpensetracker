@@ -41,6 +41,6 @@ module.exports = {
     DB_USER: config.user,
     DB_PASSWORD: config.password,
     DB_DATABASE: config.database,
-    pool: pool,
+    pool: pool, // pool.promise() export?
     config: config,
 }

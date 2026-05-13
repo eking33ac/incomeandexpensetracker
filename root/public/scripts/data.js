@@ -1,23 +1,26 @@
 // data.js - Centralized data fetching for all site scripts
 
+/* Define BASE_URL for API endpoints */
+const API_BASE_URL = '/api';
+
 // Fetch account data
 function getAccountsData() {
-    return fetch('/api/accounts').then(r => r.json());
+    return fetch(`${API_BASE_URL}/accounts`).then(r => r.json());
 }
 
 // Fetch transaction data
 function getTransactionsData() {
-    return fetch('/api/transactions').then(r => r.json());
+    return fetch(`${API_BASE_URL}/transactions`).then(r => r.json());
 }
 
 // Fetch transaction by ID
 function getTransactionById(transactionId) {
-    return fetch(`/api/transactions/${transactionId}`).then(r => r.json());
+    return fetch(`${API_BASE_URL}/transactions/${transactionId}`).then(r => r.json());
 }
 
 // Post new transaction data
 function postTransactionData(transaction) {
-    return fetch('/api/transactions', {
+    return fetch(`${API_BASE_URL}/transactions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -27,7 +30,7 @@ function postTransactionData(transaction) {
 }
 
 function patchTransactionData(transactionId, updatedData) {
-    return fetch(`/api/transactions/${transactionId}`, {
+    return fetch(`${API_BASE_URL}/transactions/${transactionId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -38,17 +41,17 @@ function patchTransactionData(transactionId, updatedData) {
 
 // Delete transaction by ID
 function deleteTransactionById(transactionId) {
-    return fetch(`/api/transactions/${transactionId}`, {
+    return fetch(`${API_BASE_URL}/transactions/${transactionId}`, {
         method: 'DELETE'
     }).then(r => r.json());
 }
 
 // Fetch categories data
 function getCategoriesData() {
-    return fetch('/api/categories').then(r => r.json());
+    return fetch(`${API_BASE_URL}/categories`).then(r => r.json());
 }
 
 // Fetch methods data
 function getMethodsData() {
-    return fetch('/api/methods').then(r => r.json());
+    return fetch(`${API_BASE_URL}/methods`).then(r => r.json());
 }

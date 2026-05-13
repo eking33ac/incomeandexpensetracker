@@ -88,7 +88,7 @@ module.exports = {
     }
   ],
   create: [
-    body('name')
+    body('name').trim()
       .isString().withMessage('Name must be a string')
       .notEmpty().withMessage('Name is required'),
     body('accountId')
@@ -97,13 +97,20 @@ module.exports = {
       .isFloat({ gt: 0 }).withMessage('Amount must be greater than 0'), // TODO change isfloat to isdecimal
     body('date')
       .isISO8601().withMessage('Date must be of type Date'),
-    body('type')
+    body('type').trim().toLowerCase()
       .custom(isValidTransactionType).withMessage('Type must be Income or Expense'),
     // body('category')
     //   .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'), // TODO Future vers goes back to nonempty array of ids
     body('category')
+      .customSanitizer(value => {
+        if (typeof value === 'string') return value.trim();
+        if (Array.isArray(value) && value.length === 1 && typeof value[0] === 'string') {
+          return [value[0].trim()];
+        }
+        return value;
+      })
       .custom(isValidCategorySingle).withMessage('Category must be a non-empty string or array of one non-empty string'),
-    body('method')
+    body('method').trim()
       .isString().notEmpty().withMessage('Payment Method must be of type String'),
     (req, res, next) => {
       const errors = validationResult(req);

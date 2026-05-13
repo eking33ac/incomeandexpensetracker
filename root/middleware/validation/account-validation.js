@@ -46,5 +46,59 @@ module.exports = {
             .bail()
             .custom(checkAccountExists),
         validate
+    ],
+    create: [
+        body('name').trim()
+            .isString().withMessage('Name must be a string')
+            .notEmpty().withMessage('Name is required')
+            .isLength({ max: 50 }).withMessage('Name must be at most 50 characters'),
+        body('base_balance')
+            .isDecimal().withMessage('Base balance must be a decimal number'),
+        body('display_color').trim()
+            .isString().withMessage('Display color must be a string')
+            .notEmpty().withMessage('Display color is required')
+            .isLength({ max: 6 }).withMessage('Display color must be at most 6 characters'),
+        (req, res, next) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                const fields = {};
+                errors.array().forEach(err => {
+                    if (err.param) {
+                        fields[err.param] = err.msg;
+                    } else {
+                        fields['general'] = err.msg;
+                    }
+                });
+                return res.status(400).json({ error: 'Validation failed', fields });
+            }
+            next();
+        }
+    ],
+    update: [
+        body('name').optional().trim()
+            .isString().withMessage('Name must be a string')
+            .notEmpty().withMessage('Name is required')
+            .isLength({ max: 50 }).withMessage('Name must be at most 50 characters'),
+        body('base_balance').optional()
+            .isDecimal().withMessage('Base balance must be a decimal number'),
+        body('display_color').optional().trim()
+            .isString().withMessage('Display color must be a string')
+            .notEmpty().withMessage('Display color is required')
+            .isLength({ max: 6 }).withMessage('Display color must be at most 6 characters'),
+        (req, res, next) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                const fields = {};
+                errors.array().forEach(err => {
+                    if (err.param) {
+                        fields[err.param] = err.msg;
+                    } else {
+                        fields['general'] = err.msg;
+                    }
+                });
+                return res.status(400).json({ error: 'Validation failed', fields });
+            }
+            next();
+        }
     ]
 };

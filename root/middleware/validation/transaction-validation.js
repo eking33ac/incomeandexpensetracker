@@ -90,14 +90,25 @@ module.exports = {
   create: [
     body('name').trim()
       .isString().withMessage('Name must be a string')
-      .notEmpty().withMessage('Name is required'),
+      .notEmpty().withMessage('Name is required')
+      .isLength({ max: 255 }).withMessage('Name must be at most 255 characters'),
     body('accountId')
       .isInt({ gt: 0 }).withMessage('Account ID must be greater than 0'),
     body('amount')
-      .isFloat({ gt: 0 }).withMessage('Amount must be greater than 0'), // TODO change isfloat to isdecimal
+      .toFloat()
+      .custom((value) => {
+        // Must be a number, > 0, max 10 digits total, 2 decimal places
+        if (typeof value !== 'number' || isNaN(value)) return false;
+        if (value <= 0) return false;
+        const [intPart, decPart = ''] = value.toString().split('.');
+        if (intPart.length > 8) return false; // 8 + 2 = 10 total digits
+        if (decPart.length > 2) return false;
+        return true;
+      }).withMessage('Amount must be a positive decimal with up to 10 digits total and 2 decimal places'),
     body('date')
       .isISO8601().withMessage('Date must be of type Date'),
     body('type').trim().toLowerCase()
+      .isLength({ max: 7 }).withMessage('Type must be at most 7 characters')
       .custom(isValidTransactionType).withMessage('Type must be Income or Expense'),
     // body('category')
     //   .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'), // TODO Future vers goes back to nonempty array of ids
@@ -109,9 +120,18 @@ module.exports = {
         }
         return value;
       })
+      .custom((value) => {
+        // Check length for string or array
+        if (typeof value === 'string') return value.length <= 20;
+        if (Array.isArray(value) && value.length === 1 && typeof value[0] === 'string') {
+          return value[0].length <= 20;
+        }
+        return false;
+      }).withMessage('Category must be at most 20 characters')
       .custom(isValidCategorySingle).withMessage('Category must be a non-empty string or array of one non-empty string'),
     body('method').trim()
-      .isString().notEmpty().withMessage('Payment Method must be of type String'),
+      .isString().notEmpty().withMessage('Payment Method must be of type String')
+      .isLength({ max: 20 }).withMessage('Payment Method must be at most 20 characters'),
     (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -138,28 +158,46 @@ module.exports = {
     body('name')
       .optional()
       .isString().withMessage('Name must be a string')
-      .notEmpty().withMessage('Name is required'),
+      .notEmpty().withMessage('Name is required')
+      .isLength({ max: 255 }).withMessage('Name must be at most 255 characters'),
     body('accountId')
       .optional()
       .isInt({ gt: 0 }).withMessage('Account ID must be greater than 0'),
     body('amount')
       .optional()
-      .isFloat({ gt: 0 }).withMessage('Amount must be greater than 0'),
+      .toFloat()
+      .custom((value) => {
+        if (typeof value !== 'number' || isNaN(value)) return false;
+        if (value <= 0) return false;
+        const [intPart, decPart = ''] = value.toString().split('.');
+        if (intPart.length > 8) return false;
+        if (decPart.length > 2) return false;
+        return true;
+      }).withMessage('Amount must be a positive decimal with up to 10 digits total and 2 decimal places'),
     body('date')
       .optional()
       .isISO8601().withMessage('Date must be of type Date'),
     body('type')
       .optional()
-      .custom(isValidTransactionType).withMessage('Type must be Income or Expense'),
+      .isLength({ max: 7 }).withMessage('Type must be at most 7 characters')
+      .custom(isValidTransactionType).withMessage('Type must be income or expense'),
     // body('category') // TODO future vers goes back to nonempty array of ids
     //   .optional()
     //   .custom(isValidCategoryArray).withMessage('Category must be a non-empty array of strings'),
     body('category')
       .optional()
+      .custom((value) => {
+        if (typeof value === 'string') return value.length <= 20;
+        if (Array.isArray(value) && value.length === 1 && typeof value[0] === 'string') {
+          return value[0].length <= 20;
+        }
+        return false;
+      }).withMessage('Category must be at most 20 characters')
       .custom(isValidCategorySingle).withMessage('Category must be a non-empty string or array of one non-empty string'),
     body('method')
       .optional()
-      .isString().notEmpty().withMessage('Payment Method must be of type String'),
+      .isString().notEmpty().withMessage('Payment Method must be of type String')
+      .isLength({ max: 20 }).withMessage('Payment Method must be at most 20 characters'),
     (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {

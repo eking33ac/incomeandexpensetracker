@@ -12,6 +12,8 @@ const TransactionValidator = require('../middleware/validation/transaction-valid
 const AccountValidator = require('../middleware/validation/account-validation'); // Not currently used because the only endpoint is a GET ALL
 // const CategoryValidator = require('../middleware/validation/category-validation');  // Not currently used because the only endpoint is a GET ALL
 // const MethodValidator = require('../middleware/validation/method-validation');  // Not currently used because the only endpoint is a GET ALL
+const { sanitizeTransactionInput } = require('../middleware/sanitization/transaction-sanitization');
+
 
 /* Create router */
 const router = express.Router();
@@ -22,10 +24,10 @@ const router = express.Router();
 router.get('/transactions', transactionsAPIController.getTransactions);
 // Get transaction by id – No body, usually just validating the ID in the param
 router.get('/transactions/:id', TransactionValidator.checkIdExists, transactionsAPIController.getTransactionById); // Matches a URL like: /api/transactions/1 (1 is the hypoethical transaction id)
-// Post a new transaction – Validates the req body
-router.post('/transactions', AccountValidator.checkIdExists, TransactionValidator.create, transactionsAPIController.postTransaction);
-// Patch (update) a transaction by id – Validates ID and body
-router.patch('/transactions/:id', AccountValidator.checkIdExists, TransactionValidator.update, transactionsAPIController.updateTransaction);
+// Post a new transaction – Sanitizes, then validates the req body
+router.post('/transactions', AccountValidator.checkIdExists, sanitizeTransactionInput, TransactionValidator.create, transactionsAPIController.postTransaction);
+// Patch (update) a transaction by id – Sanitizes, then validates ID and body
+router.patch('/transactions/:id', AccountValidator.checkIdExists, sanitizeTransactionInput, TransactionValidator.update, transactionsAPIController.updateTransaction);
 // Delete a transaction by id – Validates ID
 router.delete('/transactions/:id', TransactionValidator.checkIdExists, transactionsAPIController.deleteTransaction);
 

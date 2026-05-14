@@ -13,15 +13,35 @@ function handleTransactionErrors(response, fields, modal) {
 
     if (response && response.error) {
         let handled = false;
-        if (response.fields) {
-            Object.entries(response.fields).forEach(([field, message]) => {
-                if (fields[field]) {
-                    fields[field].error.textContent = message;
-                    fields[field].input.classList.add('invalid');
-                    handled = true;
-                }
-            });
+
+        // Here to check modal so function can be reused for other forms in the future.
+        if (modal.id === 'transaction-modal') {
+
+            if (response.fields) {
+                console.log('Backend error keys:', Object.keys(response.fields));
+    console.log('Frontend field keys:', Object.keys(fields));
+                const fieldMap = {
+                    name: 'name',
+                    amount: 'amount',
+                    date: 'date',
+                    accountId: 'account',
+                    category: 'category',
+                    method: 'method'
+                };
+                Object.entries(response.fields).forEach(([field, message]) => {
+                    const fieldKey = fieldMap[field] || field;
+                    if (fields[fieldKey]) {
+                        fields[fieldKey].error.textContent = message;
+                        fields[fieldKey].input.classList.add('invalid');
+                        handled = true;
+                    }
+                });
+            }
+
         }
+
+
+
         // If no field matched or no fields object, show a general error
         if (!handled && fields.general && fields.general.error) {
             fields.general.error.textContent = response.error;
@@ -160,12 +180,7 @@ function createFormFields(form, transactionType) {
     // Append all fields
     Object.values(fields).forEach(field => {
         if (field.wrapper) form.appendChild(field.wrapper);
-    });    
-    // General error field to put server errors in if server error doesn't match a field name
-    fields.general = { error: document.createElement('div') };
-    fields.general.error.classList.add('general-error');
-    form.insertBefore(fields.general.error, form.firstChild);
-
+    });
     return fields;
 }
 

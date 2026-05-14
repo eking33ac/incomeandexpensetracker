@@ -72,8 +72,8 @@ module.exports = {
         // Format errors as { fields: { fieldName: message } }
         const fields = {};
         errors.array().forEach(err => {
-          if (err.param) {
-            fields[err.param] = err.msg;
+          if (err.path) {
+            fields[err.path] = err.msg;
           } else {
             fields['id'] = err.msg;
           }
@@ -135,10 +135,11 @@ module.exports = {
     (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log('Validation errors:', errors.array());
         const fields = {};
         errors.array().forEach(err => {
-          if (err.param) {
-            fields[err.param] = err.msg;
+          if (err.path) {
+            fields[err.path] = err.msg;
           } else {
             fields['general'] = err.msg;
           }
@@ -203,8 +204,8 @@ module.exports = {
       if (!errors.isEmpty()) {
         const fields = {};
         errors.array().forEach(err => {
-          if (err.param) {
-            fields[err.param] = err.msg;
+          if (err.path) {
+            fields[err.path] = err.msg;
           } else {
             fields['general'] = err.msg;
           }

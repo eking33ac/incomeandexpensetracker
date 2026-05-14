@@ -1,15 +1,21 @@
+// Helper: Show/hide loading animation on a button
+function setButtonLoading(button, isLoading, loadingText = "Loading...") {
+    if (isLoading) {
+        button._originalText = button.textContent;
+        button.textContent = loadingText;
+        button.disabled = true;
+    } else {
+        if (button._originalText) button.textContent = button._originalText;
+        button.disabled = false;
+    }
+}
 "use strict";
 
 /* Create and manage transaction modals with client-side form validation */
 
 // Helper: Handle errors in responses for POST/PATCH requests and display them in the modal form
 function handleTransactionErrors(response, fields, modal) {
-    // Clear previous errors
-    Object.values(fields).forEach(field => {
-        if (field.input) field.input.classList.remove('invalid');
-        if (field.error) field.error.textContent = '';
-    });
-    if (fields.general && fields.general.error) fields.general.error.textContent = '';
+    // Do NOT clear previous errors here. Errors will be cleared only when the user edits the field (see setupEventListeners).
 
     if (response && response.error) {
         let handled = false;
@@ -19,7 +25,7 @@ function handleTransactionErrors(response, fields, modal) {
 
             if (response.fields) {
                 console.log('Backend error keys:', Object.keys(response.fields));
-    console.log('Frontend field keys:', Object.keys(fields));
+                console.log('Frontend field keys:', Object.keys(fields));
                 const fieldMap = {
                     name: 'name',
                     amount: 'amount',
@@ -202,52 +208,68 @@ function createModalActions(form, saveText = 'Save Transaction', cancelText = 'C
 
 // Helper: Set up validation
 function setupValidation(form, fields, onSubmit) {
-    function clearErrors() {
-        Object.values(fields).forEach(field => {
-            if (field.input) field.input.classList.remove('invalid');
-            field.error.textContent = '';
-        });
+    // Only clear errors for fields that are now valid, not all at once
+    function clearFieldError(field) {
+        if (field.input) field.input.classList.remove('invalid');
+        if (field.error) field.error.textContent = '';
     }
 
     function validateForm() {
-        clearErrors();
         let valid = true;
 
+        // Name
         if (!fields.name.input.value.trim()) {
             fields.name.error.textContent = 'Transaction name is required.';
             fields.name.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.name);
         }
 
+        // Date
         if (!fields.date.input.value) {
             fields.date.error.textContent = 'Please choose a date.';
             fields.date.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.date);
         }
 
+        // Amount
         const amountValue = parseFloat(fields.amount.input.value);
         if (!fields.amount.input.value || Number.isNaN(amountValue) || amountValue <= 0) {
             fields.amount.error.textContent = 'Enter an amount greater than 0.';
             fields.amount.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.amount);
         }
 
+        // Account
         if (!fields.account.input.value.trim()) {
             fields.account.error.textContent = 'Account name is required.';
             fields.account.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.account);
         }
 
+        // Category
         if (!fields.category.input.value) {
             fields.category.error.textContent = 'Please select a category.';
             fields.category.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.category);
         }
 
+        // Method
         if (!fields.method.input.value) {
             fields.method.error.textContent = 'Please select a method.';
             fields.method.input.classList.add('invalid');
             valid = false;
+        } else {
+            clearFieldError(fields.method);
         }
 
         return valid;
@@ -291,11 +313,12 @@ function CreateModalNewTransaction(transactionType) {
     const closeSpan = createModalHeader(content);
     const form = createForm(content);
     const fields = createFormFields(form, transactionType);
-    const { cancelBtn } = createModalActions(form);    
+    const { saveBtn, cancelBtn } = createModalActions(form);
 
-
-
+    let isSubmitting = false;
     setupValidation(form, fields, (fields) => {
+        if (isSubmitting) return;
+        isSubmitting = true;
         // Get selected category (dropdown)
         const categoryName = fields.category.input.options[fields.category.input.selectedIndex].textContent;
         const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
@@ -311,21 +334,42 @@ function CreateModalNewTransaction(transactionType) {
             method: methodName // use the name, not the id
         };
         console.log("Posting transaction:", newTransaction);
-        // Post to the server with the new transaction data
+        setButtonLoading(saveBtn, true);
+        const minLoadingTime = 2000;
+        const startTime = Date.now();
         postTransactionData(newTransaction)
             .then(response => {
-                if (handleTransactionErrors(response, fields, modal)) return;
-                console.log("Server response:", response);
-                // Show alert, then reload after user confirms
-                alert(`Transaction "${response.name}" created successfully!`);
-                modal.remove();
-                window.location.reload();
+                const elapsed = Date.now() - startTime;
+                const finish = () => {
+                    setButtonLoading(saveBtn, false);
+                    isSubmitting = false;
+                    if (handleTransactionErrors(response, fields, modal)) return;
+                    console.log("Server response:", response);
+                    // Show alert, then reload after user confirms
+                    alert(`Transaction \"${response.name}\" created successfully!`);
+                    modal.remove();
+                    window.location.reload();
+                };
+                if (elapsed < minLoadingTime) {
+                    setTimeout(finish, minLoadingTime - elapsed);
+                } else {
+                    finish();
+                }
             })
-            .catch(err => { // Generic error for now. In the future, could check error type/message and display specific messages for different cases (e.g. network error vs server validation error vs unexpected server error)
-                console.error('Failed to create transaction:', err);
-                alert('Failed to create transaction. Please try again.');
+            .catch(err => {
+                const elapsed = Date.now() - startTime;
+                const finish = () => {
+                    setButtonLoading(saveBtn, false);
+                    isSubmitting = false;
+                    console.error('Failed to create transaction:', err);
+                    alert('Failed to create transaction. Please try again.');
+                };
+                if (elapsed < minLoadingTime) {
+                    setTimeout(finish, minLoadingTime - elapsed);
+                } else {
+                    finish();
+                }
             });
-        // Optionally, refresh the transaction list or create the row
     });
     setupEventListeners(modal, fields, closeSpan, cancelBtn);
 
@@ -349,8 +393,7 @@ function CreateModalEditTransaction(transactionId) {
             const closeSpan = createModalHeader(content, 'Edit Transaction');
             const form = createForm(content);
             const fields = createFormFields(form, transaction.type);
-            const { cancelBtn } = createModalActions(form, 'Update Transaction', 'Cancel');
-
+            const { saveBtn: updateBtn, cancelBtn } = createModalActions(form, 'Update Transaction', 'Cancel');
 
             // Pre-populate fields
             fields.name.input.value = transaction.name;
@@ -380,10 +423,12 @@ function CreateModalEditTransaction(transactionId) {
             setCategoryCheckboxes();
 
             // Method: set selected
-            fields.method.input.value = transaction.methodId; // Does this exist here?
+            fields.method.input.value = transaction.methodId;
 
+            let isSubmitting = false;
             setupValidation(form, fields, (fields) => {
-                // Get selected category (dropdown)
+                if (isSubmitting) return;
+                isSubmitting = true;
                 const categoryName = fields.category.input.options[fields.category.input.selectedIndex].textContent;
                 const methodName = fields.method.input.options[fields.method.input.selectedIndex].textContent;
                 // Ensure id is always an integer
@@ -399,16 +444,39 @@ function CreateModalEditTransaction(transactionId) {
                     method: methodName // use the name, not the id
                 };
                 console.log("Updating transaction with data:", updatedTransaction);
+                setButtonLoading(updateBtn, true, 'Updating...');
+                const minLoadingTime = 2000;
+                const startTime = Date.now();
                 patchTransactionData(intId, updatedTransaction)
                     .then(response => {
-                        if (handleTransactionErrors(response, fields, modal)) return; // If there were validation errors from the server, handle them and stop here
-                        alert(`Transaction "${response.name}" updated successfully!`);
-                        modal.remove();
-                        window.location.reload();
+                        const elapsed = Date.now() - startTime;
+                        const finish = () => {
+                            setButtonLoading(updateBtn, false, 'Updating...');
+                            isSubmitting = false;
+                            if (handleTransactionErrors(response, fields, modal)) return;
+                            alert(`Transaction "${response.name}" updated successfully!`);
+                            modal.remove();
+                            window.location.reload();
+                        };
+                        if (elapsed < minLoadingTime) {
+                            setTimeout(finish, minLoadingTime - elapsed);
+                        } else {
+                            finish();
+                        }
                     })
                     .catch(err => {
-                        console.error('Failed to update transaction:', err);
-                        alert('Failed to update transaction. Please try again.');
+                        const elapsed = Date.now() - startTime;
+                        const finish = () => {
+                            setButtonLoading(updateBtn, false, 'Updating...');
+                            isSubmitting = false;
+                            console.error('Failed to update transaction:', err);
+                            alert('Failed to update transaction. Please try again.');
+                        };
+                        if (elapsed < minLoadingTime) {
+                            setTimeout(finish, minLoadingTime - elapsed);
+                        } else {
+                            finish();
+                        }
                     });
                 // Optionally, refresh the transaction list or create the row
             });
@@ -457,20 +525,41 @@ function CreateModalDeleteTransaction(transactionId, transactionName = "this tra
     });
 
     deleteBtn.addEventListener('click', () => {
-        // Call delete API
+        setButtonLoading(deleteBtn, true, 'Deleting...');
+        const minLoadingTime = 2000;
+        const startTime = Date.now();
+        // Call delete api
         deleteTransactionById(transactionId)
             .then(response => {
-                if (response && response.error) {
-                    alert(response.error || 'Failed to delete transaction.');
-                    return;
+                const elapsed = Date.now() - startTime;
+                const finish = () => {
+                    setButtonLoading(deleteBtn, false, 'Deleting...');
+                    if (response && response.error) {
+                        alert(response.error || 'Failed to delete transaction.');
+                        return;
+                    }
+                    alert('Transaction deleted successfully.');
+                    modal.remove();
+                    window.location.reload();
+                };
+                if (elapsed < minLoadingTime) {
+                    setTimeout(finish, minLoadingTime - elapsed);
+                } else {
+                    finish();
                 }
-                alert('Transaction deleted successfully.');
-                modal.remove();
-                window.location.reload();
             })
             .catch(err => {
-                console.error('Failed to delete transaction:', err);
-                alert('Failed to delete transaction. Please try again.');
+                const elapsed = Date.now() - startTime;
+                const finish = () => {
+                    setButtonLoading(deleteBtn, false, 'Deleting...');
+                    console.error('Failed to delete transaction:', err);
+                    alert('Failed to delete transaction. Please try again.');
+                };
+                if (elapsed < minLoadingTime) {
+                    setTimeout(finish, minLoadingTime - elapsed);
+                } else {
+                    finish();
+                }
             });
     });
 
